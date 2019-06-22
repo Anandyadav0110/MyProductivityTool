@@ -1,0 +1,3195 @@
+{% extends 'base/layout.html' %}
+
+{% load staticfiles %}
+{% block content %}
+    <script>
+        var paird_truck_driver = "";
+    </script>
+    <section id="content">
+        <div class="pageheader">
+            <h2>Placement Add<span></span></h2>
+            <div class="page-bar">
+                <ul class="page-breadcrumb">
+                    <li>
+                        <a href="http://www.shipeasy.in/" target="_blank"><img
+                                src="{% static "assets/images/favicon.ico" %}" height="30"> Ship Easy</a>
+                    </li>
+                    <li>
+                        <a class="active-breadcrumb" href="#">Add placement</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <section class="tile">
+
+
+            <div class="tile-header dvd dvd-btm">
+                <h1 class="custom-font"><strong>Inquiry </strong>Detail</h1>
+
+            </div>
+            <div class="tile-body">
+                <table class="table table-custom dt-responsive" id="responsive-usage" width="100%">
+                    <thead>
+                    <tr>
+
+                        <th>Inquiry Number</th>
+                        <th>Customer Name</th>
+                        <th>Inquiry Weight</th>
+                        <th>Consignment Name</th>
+                        <th>Advance Payment</th>
+                        <th>Balance Payment</th>
+                        <th class="none">Pick up Address Point</th>
+                        <th class="none">Pick Up Date Time</th>
+                        <th class="none">Destination Address Point</th>
+                        <th class="none">Destination Date Time</th>
+
+                    </tr>
+                    </thead>
+                </table>
+            </div>
+        </section>
+
+
+        <!-- col -->
+        <div class="col-md-12">
+
+            <!-- tile -->
+            <section class="tile">
+
+                <div class="tile-header dvd dvd-btm">
+                    <h1 class="custom-font"><strong>Pair</strong> Truck Driver</h1>
+                </div>
+
+                <div class="tile-body">
+
+                    <form name="form1" role="form" method="POST" id="place"
+                          action="/placement/add_full_truck_placement/" enctype="multipart/form-data">{% csrf_token %}
+                        <input type="text" name="truck_current_lat" id="id_truck_current_lat" hidden
+                               onchange="onLatLongChange()">
+                        <input type="text" name="truck_current_lng" id="id_truck_current_lng" hidden
+                               onchange="onLatLongChange()">
+                        <input type="text" id="pair_id" name="pair_id" hidden>
+                        <input type="text" id="activity_count" name="activity_count" value="{{ activity_count }}" hidden
+                        >
+                        <input type="text" id="condition_check" name="condition_check" hidden>
+                        <div class="row">
+                            <div class="form-group col-md-4">
+                                <button class="btn btn-primary" type="button" onclick="Myfunction1(this)">New Vendor
+                                    Truck Driver
+                                </button>
+                            </div>
+
+                            <div class="form-group col-md-4">
+                                <button class="btn btn-primary" type="button" onclick="ExistingVendorTruckDriver()">
+                                    Existing Vendor Truck Driver
+                                </button>
+                            </div>
+                            <div class="form-group col-md-4">
+                                <button class="btn btn-primary" type="button" onclick="ExistingVendorTruckpair()">
+                                    Existing Vendor Truck
+                                </button>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group col-md-3">
+                                <label for="inputEmail3">FTL Inquiry</label>
+
+                                <select name="indend" id="indend" class="form-control col-md-4"
+                                        onchange="onAssociateChange()">
+                                    <option value="" disabled selected hidden>Select Inquiry</option>
+                                    {% for i in indend %}
+                                        <option value="{{ i.id }}">{{ i.indent_number }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="col-md-3" id="id_truck_type" hidden>
+                                <label id="driver_lable">Ownership Type:</label>
+                                <select name="select_truck_type" id="select_truck_type" class="form-control"
+                                        onchange="on_change_owner_type()"
+                                        required>
+                                    <option value="">Select Owner</option>
+
+                                    <option value="own">own</option>
+                                    <option value="market">market</option>
+
+                                </select>
+
+                            </div>
+
+                            <div id="truck_driver_div_id">
+                                <div class="col-md-3">
+                                    <label id="truck_lable">Empty Truck:</label>
+                                    <select name="truck" id="id_truck" class="form-control"
+                                            onchange="onTruckchange()">
+
+                                        {% for i in paired_truck_driver_obj %}
+                                            <option value="{{ i.transporter_truck }}">{{ i.transporter_truck__vehicle_license_number }}</option>
+                                        {% endfor %}
+                                    </select>
+
+
+                                </div>
+                                <div class="col-md-3">
+                                    <label id="driver_lable">Driver:</label>
+
+                                    <select name="driver" id="id_driver" class="form-control"
+                                            onchange="hide()">
+                                        {% for i in paired_truck_driver_obj %}
+                                            <option value="{{ i.transporter_driver }}">{{ i.transporter_driver__driver_name }}</option>
+                                        {% endfor %}
+
+                                    </select>
+
+                                </div>
+                            </div>
+
+
+                        </div>
+
+                        <div class="row" id="current_location_div">
+                            <div class="form-group col-md-4">
+                                <label for="passwordConfirm">Current Location Of Truck: </label>
+                                <input type="text" class="form-control" id="current_location"
+                                       name="current_location">
+
+                            </div>
+                            <div class="form-group col-md-4" id="privious_location">
+                                <label for="passwordConfirm">Previous Location Of Truck: </label>
+                                <input type="text" class="form-control" id="address"
+                                       name="current_location">
+
+                            </div>
+
+                        </div>
+                        <div class="tile-body">
+                            <div id="id_table">
+                                <section class="tile">
+
+                                    <div class="tile-body p-0">
+
+                                        <table class="table table-bordered">
+                                            <tbody>
+                                            <tr>
+                                                <td>Quotation Section</td>
+                                                <td>Rate</td>
+                                                <td>Quantity</td>
+                                                <td>Basic Freight Charge</td>
+
+                                                <td>GST(in %)</td>
+                                                <td>Total Invoice Amount</td>
+                                                <td>Select</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Transport Charge calculated in Distance ( QTY in Kms)</td>
+                                                <td><input class="form-control" id="km_rate_id" name="km_rate"
+                                                           type="text"
+                                                           onchange="transpoteChangeOnCalculateDistance()"
+                                                           placeholder="rs/km">
+                                                    <label>rs/km</label>
+                                                </td>
+                                                <td><input class="form-control" id="km_quantity"
+                                                           name="km_quantity" type="text"
+                                                           onchange="transpoteChangeOnCalculateDistance()">Km
+                                                </td>
+                                                <td><input class="form-control" id="km_freight" name="km_freight"
+                                                           type="text"
+                                                           onchange="transpoteChangeOnCalculateDistance()">
+                                                </td>
+                                                <td><input class="form-control" id="km_gst" name="km_gst"
+                                                           type="text" value=""
+                                                           onchange="transpoteChangeOnCalculateDistance()">
+                                                </td>
+                                                <td><input class="form-control" id="km_id_invoice"
+                                                           name="km_id_invoice"
+                                                           type="text"
+                                                ></td>
+                                                <td>
+                                                    <label class="checkbox-inline checkbox-custom">
+                                                        <input type="checkbox" name="km_select" id="km_select"
+                                                               onclick="kmSelect(this);"><i></i>
+                                                    </label>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>Transport Charge calculated in Weight (QTY in Ton)</td>
+                                                <td><input class="form-control" id="kg_rate" name="kg_rate"
+                                                           type="text" value=""
+                                                           onchange="transpoteChangeOnCalculateWeight()"
+                                                           placeholder="rs/kg">
+                                                    <label>rs/kg</label>
+                                                </td>
+                                                <td><input class="form-control" id="kg_quantity"
+                                                           name="kg_quantity" type="text"
+                                                           onchange="transpoteChangeOnCalculateWeight()">Ton
+                                                </td>
+                                                <td><input class="form-control" id="kg_freight" name="kg_freight"
+                                                           type="text"
+                                                           onchange="transpoteChangeOnCalculateWeight()"></td>
+                                                <td><input class="form-control" id="kg_gst" name="kg_gst"
+                                                           type="text" value=""
+                                                           onchange="transpoteChangeOnCalculateWeight()">
+                                                </td>
+                                                <td><input class="form-control" id="kg_invoice"
+                                                           name="kg_invoice"
+                                                           type="text"
+                                                           onchange="finalCost()"></td>
+                                                <td>
+                                                    <label class="checkbox-inline checkbox-custom">
+                                                        <input type="checkbox" name="kg_select" id="kg_Select"
+                                                               onclick="kgSelect(this);"><i></i>
+                                                    </label>
+                                                </td>
+                                            </tr>
+
+
+                                            <tr>
+                                                <td>Transport Charge calculated in GrossTotal</td>
+                                                <td>
+                                                </td>
+                                                <td></td>
+                                                <td><input class="form-control" id="gross_freight" name="gross_freight"
+                                                           type="text"
+                                                           onchange="transpoteChangeOnCalculateGross()"></td>
+                                                <td><input class="form-control" id="gross_gst" name="gross_gst"
+                                                           type="text"
+                                                           onchange="transpoteChangeOnCalculateGross()">
+                                                </td>
+                                                <td><input class="form-control" id="gross_invoice"
+                                                           name="gross_invoice"
+                                                           type="text"
+                                                           onchange="finalCost()"></td>
+                                                <td>
+                                                    <label class="checkbox-inline checkbox-custom">
+                                                        <input type="checkbox" name="gross_select" id="gross_select"
+                                                               onclick="grossSelect(this);"><i></i>
+                                                    </label>
+                                                </td>
+                                            </tr>
+
+
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </section>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-2">
+
+
+                                    <button type="submit" class="btn btn-success" id="saveQoute">Save Quote</button>
+                                </div>
+                                <div class="col-md-3">
+                                    <button class="btn btn-success" onclick="saveAndExcel()">Export Quote In Excel
+                                    </button>
+                                </div>
+                                <div class="col-md-2">
+                                    <button class="btn btn-success" onclick="startShipment()">Start Shipment</button>
+                                </div>
+                                <div class="col-md-2"><h5>Trip Budget</h5></div>
+                                <div class="col-md-3">
+
+                                    <input class="form-control" id="driver_final_total"
+                                           name="driver_final_total" required
+                                           type="number">
+                                </div>
+                            </div>
+                            <br>
+                            <br>
+
+                            <div id="own_table" hidden>
+                                <section class="tile">
+
+                                    <div class="tile-body p-0">
+
+                                        <table class="table table-bordered">
+                                            <thead>
+                                            <tr>
+
+                                                <th style="width:20%;">Costing Section</th>
+                                                <th style="width:10%;">Rate</th>
+                                                <th style="width:13%;">Units</th>
+
+                                                <th style="width:22%;">Total</th>
+                                                <th style="width:12%;">Select To Budget</th>
+
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+
+
+                                            <tr>
+
+                                                <td>Final Total</td>
+                                                <td><input class="form-control" id="total_rate_extra"
+                                                           name="total_rate_extra" required
+                                                           type="text"></td>
+                                                <td><input class="form-control" id="total_unit_extra"
+                                                           name="total_unit_extra" required
+                                                           type="text"></td>
+                                                <td><input class="form-control" id="final_total"
+                                                           name="final_total" required
+                                                           type="number">
+                                                </td>
+
+
+
+
+
+
+                                                <td>
+                                                    <label class="checkbox-inline checkbox-custom">
+                                                        <input type="checkbox" name="driver_final_total_check"
+                                                               id="driver_final_total_check"
+                                                               onclick="driverBudgetSelection(this);"><i></i>
+                                                    </label>
+                                                </td>
+                                            </tr>
+
+
+                                            <tr>
+                                                <td>Pre-pickUp-to-PickUp</td>
+
+                                                <td><input class="form-control" id="2" name="current_to_pick_rate"
+                                                           type="text"
+                                                           value=""
+                                                           onchange="preePicUpToPicUp()" required
+                                                           placeholder="rs/km">
+                                                    <label>rs/km</label>
+                                                </td>
+                                                <td><input class="form-control" id="1" name="current_to_pick"
+                                                           type="text" value="{{ activity_obj }}"
+                                                           onchange="preePicUpToPicUp()" required>kms
+                                                </td>
+
+                                                <td><input class="form-control" required id="3"
+                                                           name="current_to_pick_rate_cost"
+                                                           type="text"
+                                                           onchange="preePicUpToPicUp()"></td>
+
+
+                                                <td>
+                                                    <label class="checkbox-inline checkbox-custom">
+                                                        <input type="checkbox" name="pree_to_pic_select"
+                                                               id="inlineCheckbox1"
+                                                               onclick="preePickUptoPickSelection(this);"><i></i>
+                                                    </label>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>Pick Up To Destination</td>
+
+                                                <td><input class="form-control" onchange="picUpToDestination()"
+                                                           id="rate_pick_to_desti" required
+                                                           name="rate_pick_to_desti" type="text"
+                                                           placeholder="rs/km">
+                                                    <label>rs/km</label>
+                                                <td><input class="form-control" onchange="picUpToDestination()"
+                                                           id="pick_to_desti" required name="pick_to_desti"
+                                                           type="text">kms
+                                                </td>
+
+                                                </td>
+                                                <td><input class="form-control" onchange="picUpToDestination()"
+                                                           id="cost_pick_to_desti" required
+                                                           name="cost_pick_to_desti" type="text">
+                                                </td>
+
+                                                <td><label class="checkbox-inline checkbox-custom">
+                                                    <input type="checkbox" name="pic_to_desti_select"
+                                                           id="inlineCheckbox2"
+                                                           onclick="picUpToDestinationSelection(this);"><i></i>
+                                                </label>
+                                                </td>
+
+                                            </tr>
+
+                                            </tbody>
+                                        </table>
+
+                                    </div>
+                                    <!-- /tile body -->
+
+                                </section>
+                                <button class="btn" type="button" name="ok" id="add_new_div" onclick="add_new_entry()">
+                                    ADD ACTIVITY
+                                </button>
+
+
+                                <div id="edit_table"></div>
+                                <div id="id_parent" class="tile">
+
+                                </div>
+
+
+                                <input type="text" name="total_row_count" id="insert" hidden>
+
+
+                            </div>
+                            <div id="market_table" hidden>
+                                <section class="tile">
+
+                                    <div class="tile-body p-0">
+
+                                        <table class="table table-bordered">
+                                            <thead>
+                                            <tr>
+
+                                                <th style="width:20%;">Costing Section (Market Vendor)</th>
+                                                <th style="width:10%;">Advance (in %)</th>
+                                                <th style="width:13%;">Gross Total</th>
+
+                                                <th style="width:22%;">TDS (in %)</th>
+                                                <th style="width:22%;">Total Invoice Payable</th>
+                                                <th style="width:12%;">Select To Budget</th>
+
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+
+
+                                            <tr>
+
+                                                <td><input class="form-control" id="total_rate_extra"
+                                                           name="total_rate_extra" placeholder="Vender Name"
+                                                           type="text"></td>
+                                                <td><input class="form-control" id="total_rate_extra"
+                                                           name="total_rate_extra"
+                                                           type="text"></td>
+                                                <td><input class="form-control" id="total_unit_extra"
+                                                           name="total_unit_extra"
+                                                           type="text"></td>
+                                                <td><input class="form-control" id="final_total"
+                                                           name="final_total"
+                                                           type="number">
+                                                </td>
+                                                <td><label class="checkbox-inline checkbox-custom">
+                                                    <input type="checkbox" name="pic_to_desti_select"
+                                                           id="inlineCheckbox2"
+                                                           onclick="picUpToDestinationSelection(this);"><i></i>
+                                                </label>
+                                                </td>
+
+
+
+
+
+
+
+                                            </tr>
+
+
+                                            </tbody>
+                                        </table>
+
+                                    </div>
+                                    <!-- /tile body -->
+
+                                </section>
+                                <button class="btn" type="button" name="ok" id="add_new_div2"
+                                        onclick="add_new_entry2()">ADD ACTIVITY
+                                </button>
+
+
+                                <div id="edit_table"></div>
+                                <div id="id_parent2" class="tile">
+
+                                </div>
+
+
+                                <input type="text" name="total_row_count" id="insert2" hidden>
+                            </div>
+
+                        </div>
+
+                    </form>
+
+                </div>
+
+            </section>
+        </div>
+    </section>
+    <div id="myModal1" class="modal fade" role="dialog">
+        <div class="modal-dialog" style="margin-top:60px;">
+
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Add Vendor</h4>
+                </div>
+                <div class="modal-body">
+                    <form id="add_vendor" name="vendor">{% csrf_token %}
+
+                        <div class="row">
+                            <input type="text" value="new_vendor_id" name="new_vendor_id" id="new_vendor_id" hidden>
+                            <div class="form-group col-md-3">
+                                <label for="name">Vendor Name: </label>
+                                <input type="text" name="vendor_name" id="vendor_name" class="form-control" value=""
+                                       data-parsley-trigger="change"
+                                       required>
+                            </div>
+
+
+                            <div class="form-group col-md-3">
+                                <label for="first_name">First name: </label>
+                                <input type="text" name="first_name" id="first_name" class="form-control"
+                                       data-parsley-trigger="change" value=""
+                                       required>
+                            </div>
+
+
+                            <div class="form-group col-md-3">
+                                <label for="last_name">Last name: </label>
+                                <input type="text" name="last_name" id="last_name" class="form-control"
+                                       data-parsley-trigger="change" value=""
+                                       required>
+                            </div>
+
+                            <div class="form-group col-md-3">
+                                <label for="mobile_number">Mobile Number: </label>
+                                <input type="text" name="mobile_number" id="mobile_number" class="form-control"
+                                       onchange="unique_vendor_mobile_number()" value=""
+                                       data-parsley-trigger="change" maxlength="10" data-parsley-pattern="^\d{10}$"
+                                       onkeypress="return isNumberKey(event)" placeholder="Enter 0-9 10 Digit number"
+                                       required>
+                            </div>
+
+                        </div>
+                        <div class="row">
+                            <div class="form-group col-md-3">
+                                <label for="pan">PAN NO: </label>
+                                <input type="text" name="pan_no" id="pan_no" autocomplete="false" value=""
+                                       class="form-control"
+                                       data-parsley-trigger="change"
+                                       maxlength="10" required>
+                            </div>
+
+
+                            <div class="form-group col-md-6">
+                                <label for="deductee_type">Deductee Type: </label>
+
+                                <select name="deductee_type" id="deductee_type" class="form-control mb-10"
+                                        data-parsley-trigger="change"
+                                        required>
+
+                                    <option value="boi">Body of Individual(BOI)</option>
+                                    <option value="huf">Hindu Undivided Family(HUF)</option>
+                                    <option value="firm">Firm</option>
+                                    <option value="partnership">Partnership</option>
+                                    <option value="company">Company</option>
+                                    <option value="aop">Association of Person(AOP)</option>
+                                    <option value="la">Local Authority</option>
+                                    <option value="ajp">Artificial Juridical Person</option>
+                                    <option value="gov">Govt.</option>
+
+                                </select>
+                            </div>
+
+                            <div class="form-group col-md-3">
+                                <label for="tds_rate">TDS Rate (in %): </label>
+                                <input type="text" name="tds_rate" id="tds_rate" class="form-control" value=""
+                                       data-parsley-trigger="change"
+                                       required>
+                            </div>
+
+                        </div>
+
+                    </form>
+
+                    <div class="modal-footer">
+                        <div class="row">
+                            <div class="col-md-1">
+                                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                            </div>
+                            <button type="submit" id="submitForm1" class="btn btn-default" onclick="addVendor()">
+                                Next
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+    </div>
+    </section>
+    <div id="myModal2" class="modal fade" role="dialog">
+        <div class="modal-dialog" style="margin-top:60px;">
+
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Add Truck</h4>
+                </div>
+                <div class="modal-body">
+                    <form id="add_truck" name="truck">{% csrf_token %}
+                        <div id="hide_div" style="border:1px solid #A9A9A9;margin:0 auto;padding:20px">
+
+                            <div class="row">
+                                <div class="col-md-4" hidden>
+                                    <label>Truck Owner Type: :</label>
+                                    <select name="owner_type" id="owner_type" class="form-control mb-10"
+                                            data-parsley-trigger="change"
+                                            required>
+
+                                        <option value="own">OWN</option>
+                                        <option value="market" selected="selected">MARKET</option>
+
+                                    </select>
+                                </div>
+
+
+                                <div class="col-md-4">
+                                    <input type="text" value="add_market_truck" id="market_truck_id"
+                                           name="market_truck_id" hidden>
+
+                                    <label>License Number: :</label>
+                                    <input type="text" name="license_number" id="unique_truck_licence"
+                                           onkeydown="upperCaseF(this)"
+                                           value="{{ truck_obj.vehicle_license_number }}" required
+                                           onchange="uniqueTruckLicence()"
+                                           class="form-control">
+
+                                </div>
+                                <div class="col-md-4">
+                                    <label>Truck Type:</label>
+                                    <select name="truck_type" id="truck_type" class="form-control mb-10">
+
+                                        {% for i in truck_type %}
+
+                                            <option value="{{ i.id }}"
+                                                    {% if truck_obj.vehicle_type.id == i.id %}selected="selected"{% endif %}>{{ i.truck_type }}
+
+                                            </option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                <div class="col-md-4">
+                                    <label>Mobile Operator:</label>
+
+                                    <select name="mobile_operator" id="mobile_operator" class="form-control mb-10"
+                                            required>
+
+                                        {% for i in operator %}
+
+                                            <option value="{{ i.id }}"
+                                                    {% if truck_obj.mobile_number.operator.id == i.id %}selected="selected"{% endif %}>{{ i.operator }}
+
+                                            </option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <label>Truck Capacity:</label>
+                                    <select name="truck_capacity" id="truck_capacity" class="form-control mb-10">
+
+                                        {% for i in truck_capacity %}
+
+
+                                            <option value="{{ i.id }}"
+                                                    {% if truck_obj.vehicle_capacity.id == i.id %}selected="selected"{% endif %}>{{ i.truck_capacity }}
+
+                                            </option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+
+
+                                <div class="col-md-4">
+                                    <label>Truck Length:</label>
+                                    <select name="truck_length" id="truck_length" class="form-control mb-10">
+                                        {% for i in truck_length %}
+                                            <option value="{{ i.id }}"
+                                                    {% if truck_obj.vehicle_length.id == i.id %}selected="selected"{% endif %}>{{ i.truck_length }}
+                                            </option>
+                                        {% endfor %}
+                                    </select>
+
+                                </div>
+                                <div class="col-md-4">
+                                    <label>Mobile Number:</label>
+                                    <input type="text" name="mobile_number"
+                                           required
+                                           value="{{ truck_obj.mobile_number.mobile_number }}"
+                                           onchange="unique_truck_mobile_number()"
+                                           class="form-control" id="id_mobile_number" maxlength="10"
+                                           data-parsley-pattern="^\d{10}$"
+                                           onkeypress="return isNumberKey(event)" required
+                                           placeholder="Enter 0-9 10 Digit number">
+
+                                </div>
+                                <div class="row">
+
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+
+                    <div class="modal-footer">
+                        <div class="row">
+                            <div class="col-md-1">
+                                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                            </div>
+                            <button type="button" class="btn btn-default" data-dismiss="modal" onclick="backvendor()">
+                                Back
+                            </button>
+                            <button type="submit" id="submitForm2" class="btn btn-default" onclick="addTruck()">
+                                Next
+                            </button>
+
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+    </div>
+    </section>
+    <div id="myModal3" class="modal fade" role="dialog">
+        <div class="modal-dialog" style="margin-top:60px;">
+
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Add Driver</h4>
+                </div>
+                <div class="modal-body">
+                    <form id="add_driver" name="driver">{% csrf_token %}
+                        <input type="text" id="market_driver_id" name="check_market_driver" value="market_driver"
+                               hidden>
+
+                        <div class="row">
+                            <div class="col-md-4">
+                                <input type="text" value="new_driver_id" name="new_driver_id" id="new_driver_id" hidden>
+                                <label>Driver Name:</label>
+                                <input type="text" id="driver_name" name="driver_name"
+                                       value="{{ driver_obj.driver_name }}" required
+                                       class="form-control">
+
+
+                            </div>
+                            <div class="col-md-4">
+                                <label>Phone Number:</label>
+                                <input type="text" name="phone_number" value="{{ driver_obj.phone }}"
+                                       id="driver_mobile_number" required onchange="unique_driver_mobile_number()"
+                                       class="form-control" placeholder="Mobile Number " data-parsley-trigger="change"
+                                       maxlength="10" data-parsley-pattern="^\d{10}$"
+                                       onkeypress="return isNumberKey(event)" required>
+                            </div>
+                            <div class="col-md-4">
+                                <label>Mobile Operator:</label>
+
+                                <select name="driver_mobile_operator" id="driver_mobile_operator"
+                                        class="form-control mb-10"
+                                        required>
+
+                                    {% for i in operator %}
+
+                                        <option value="{{ i.id }}"
+                                                {% if truck_obj.mobile_number.operator.id == i.id %}selected="selected"{% endif %}>{{ i.operator }}
+
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+
+                        </div>
+                    </form>
+
+                    <div class="modal-footer">
+                        <div class="row">
+                            <div class="col-md-1">
+                                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                            </div>
+                            <button type="submit" id="submitForm2" class="btn btn-default" onclick="backtruck()">
+                                Back
+                            </button>
+                            <button type="submit" id="submitForm3" class="btn btn-default" onclick="pair_all()">
+                                Pair
+                            </button>
+
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+    </div>
+    </section>
+
+
+    <div id="existing_vendor_truck_driver" class="modal fade" role="dialog">
+        <div class="modal-dialog" style="margin-top:60px;">
+
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Pair Vendor Truck Driver</h4>
+                </div>
+                <div class="modal-body">
+                    <form id="add_vendor_truck_driver" name="vendor" method="POST"
+                          action="/market_vehicle/vendor_truck_driver_pair/">{% csrf_token %}
+
+                        <div class="row">
+                            <div class="form-group col-md-4">
+                                <label for="vendor_name">Vendor </label>
+                                <select name="vendorname" id="vendorname" class="form-control col-md-4">
+                                </select>
+                            </div>
+                            <div class="form-group col-md-4">
+                                <label for="truck_number">Unpaired Truck Number: </label>
+                                <select name="markettruck" id="markettruck" class="form-control col-md-4">
+
+                                </select>
+                            </div>
+
+                            <div class="form-group col-md-4">
+                                <label for="name"> Unpaired Driver </label>
+                                <select name="marketdriver" id="marketdriver" class="form-control">
+
+                                </select>
+                            </div>
+
+
+                        </div>
+
+                    </form>
+
+
+                    <div class="modal-footer">
+                        <div class="row">
+                            <div class="col-md-1">
+                                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                            </div>
+                            <button type="submit" id="submitForm4" class="btn btn-default"
+                                    onclick="MarketVendorTruckDriver()">
+                                Pair
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+    </div>
+    </section>
+
+    <div id="existing_vendor_truck_pair" class="modal fade" role="dialog">
+        <div class="modal-dialog" style="margin-top:60px;">
+
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Pair Vendor and Existing Pair</h4>
+                </div>
+                <div class="modal-body">
+                    <form id="add_vendor_truck_pair" name="vendor2" method="POST"
+                          action="/market_vehicle/vendor_truck_pair/">{% csrf_token %}
+
+                        <div class="row">
+                            <div class="form-group col-md-4">
+                                <label for="vendor_name">Vendor </label>
+                                <select name="vendorname_2" id="vendorname_2" class="form-control col-md-4">
+                                </select>
+                            </div>
+                            <div class="form-group col-md-4">
+                                <label for="truck_number">Unpaired Truck Number: </label>
+                                <select name="markettruck_2" id="markettruck_2" class="form-control col-md-4">
+
+                                </select>
+                            </div>
+                        </div>
+
+                    </form>
+
+
+                    <div class="modal-footer">
+                        <div class="row">
+                            <div class="col-md-1">
+                                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                            </div>
+                            <button type="submit" id="submitForm5" class="btn btn-default"
+                                    onclick="MarketVendorTruckPair()">
+                                Pair
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+    </div>
+    </section>
+
+
+
+
+
+{% endblock %}
+{% block script %}
+    <script type="text/javascript">
+        $('#privious_location').hide();
+
+        function onLoadFreightChange() {
+
+            transpoteChangeOnCalculateWeight();
+            transpoteChangeOnCalculateDistance();
+            transpoteChangeOnCalculateGross();
+            preePicUpToPicUp();
+            picUpToDestination();
+            avrageRateCalculation();
+
+        }
+
+        function desableChargeOnDistance() {
+
+            $('#km_rate_id').prop('disabled', true);
+            $('#km_quantity').prop('disabled', true);
+            $('#km_freight').prop('disabled', true);
+            $('#km_gst').prop('disabled', true);
+            $('#km_id_invoice').prop('disabled', true);
+            $('#km_select').prop('disabled', true);
+
+        }
+
+        function enableChargeOnDistance() {
+
+            $('#km_rate_id').prop('disabled', false);
+            $('#km_quantity').prop('disabled', false);
+            $('#km_freight').prop('disabled', false);
+            $('#km_gst').prop('disabled', false);
+            $('#km_id_invoice').prop('disabled', false);
+            $('#km_select').prop('disabled', false);
+
+        }
+
+        function desableChargeOnWeight() {
+
+            $('#kg_rate').prop('disabled', true);
+            $('#kg_quantity').prop('disabled', true);
+            $('#kg_freight').prop('disabled', true);
+            $('#kg_gst').prop('disabled', true);
+            $('#kg_invoice').prop('disabled', true);
+            $('#kg_Select').prop('disabled', true);
+        }
+
+        function enableChargeOnweight() {
+
+            $('#kg_rate').prop('disabled', false);
+            $('#kg_quantity').prop('disabled', false);
+            $('#kg_freight').prop('disabled', false);
+            $('#kg_gst').prop('disabled', false);
+            $('#kg_invoice').prop('disabled', false);
+            $('#kg_Select').prop('disabled', false);
+        }
+
+        function desableChargeOnGross() {
+
+            $('#gross_freight').prop('disabled', true);
+            $('#gross_gst').prop('disabled', true);
+            $('#gross_invoice').prop('disabled', true);
+            $('#gross_select').prop('disabled', true);
+
+        }
+
+        function enableChargeGross() {
+
+            $('#gross_freight').prop('disabled', false);
+            $('#gross_gst').prop('disabled', false);
+            $('#gross_invoice').prop('disabled', false);
+            $('#gross_select').prop('disabled', false);
+
+        }
+
+        function kgSelect(checkboxElem) {
+            if (checkboxElem.checked) {
+                desableChargeOnDistance();
+                desableChargeOnGross();
+            } else {
+                enableChargeGross();
+                enableChargeOnDistance();
+            }
+        }
+
+        function kmSelect(checkboxElem) {
+            if (checkboxElem.checked) {
+                desableChargeOnWeight();
+                desableChargeOnGross();
+
+
+            } else {
+                enableChargeGross();
+                enableChargeOnweight();
+
+
+            }
+        }
+
+        function grossSelect(checkboxElem) {
+            if (checkboxElem.checked) {
+                desableChargeOnWeight();
+                desableChargeOnDistance();
+
+            } else {
+                enableChargeOnDistance();
+                enableChargeOnweight();
+            }
+        }
+
+    </script>
+
+    <script type="text/javascript">
+
+
+        function getCookie(cname) {
+            var name = cname + "=";
+            var ca = document.cookie.split(';');
+            for (var i = 0; i < ca.length; i++) {
+                var c = ca[i];
+                while (c.charAt(0) == ' ') {
+                    c = c.substring(1);
+                }
+                if (c.indexOf(name) == 0) {
+                    return c.substring(name.length, c.length);
+                }
+            }
+            return;
+        }
+
+        $("#truck_driver_div_id").hide();
+        $("#current_location_div").show();
+
+
+    </script>
+    <script>
+
+        function onAssociateChange() {
+
+
+            var inded_id = $('#indend').val();
+            var truck_id = $('#id_truck').val();
+
+
+            $('#km_gst').val(5);
+            $('#kg_gst').val(5);
+            $('#gross_gst').val(5);
+            $("#truck_driver_div_id").show();
+            $("#id_truck_type").show();
+
+            $('#current_location').val('');
+            $('#privious_location').val('');
+            $('#km_rate_id').val('');
+            $('#km_quantity').val('');
+            $('#km_freight').val('');
+            $('#km_id_invoice').val('');
+
+            $('#kg_rate').val('');
+            $('#kg_quantity').val('');
+            $('#kg_freight').val('');
+            $('#kg_invoice').val('');
+
+            $('#gross_freight').val('');
+            $('#gross_invoice').val('');
+
+            $('#total_rate_extra').val('');
+            $('#total_unit_extra').val('');
+            $('#final_total').val('');
+            $('#driver_final_total').val('');
+
+            $('#1').val('');
+            $('#2').val('');
+            $('#3').val('');
+            $('#1').prop('readOnly', false);
+            $('#2').prop('readOnly', false);
+            $('#3').prop('readOnly', false);
+            $('#rate_pick_to_desti').val('');
+            $('#pick_to_desti').val('');
+            $('#cost_pick_to_desti').val('');
+            $('#rate_pick_to_desti').prop('readOnly', false);
+            $('#pick_to_desti').prop('readOnly', false);
+            $('#cost_pick_to_desti').prop('readOnly', false);
+
+            $('#activity_count').val(0);
+
+
+            var points = null;
+
+            indend();
+            all_data();
+
+
+            function truckDriverchange() {
+
+                $('#inlineCheckbox2').prop("checked", false);
+                $('#inlineCheckbox1').prop("checked", false);
+                $('#final_total').val(0);
+
+                $.ajax({
+                    type: 'GET',
+                    url: '/placement/indend_matched_trucks_driver_pair/',
+                    dataType: 'json',
+                    data: {indend_id: inded_id},
+                    success: function (data12) {
+
+                        $('#id_truck').empty();
+                        $('#id_truck').append($('<option>', {
+                            value: "",
+                            text: "Select Truck"
+                        }));
+                        $.each(data12, function (i, obj) {
+
+
+                            var div_data = "<option value=" + obj.transporter_truck + ">" + obj.transporter_truck__vehicle_license_number + "</option>";
+                            $(div_data).appendTo('#id_truck');
+
+                        });
+
+
+
+                    }
+                })
+            }
+
+
+            function indend() {
+
+                var inded_id = $('#indend').val();
+                var table3 = $('#responsive-usage').DataTable({
+                    "processing": true,
+                    "paginate": false,
+                    "filter": false,
+                    "info": false,
+                    "destroy": true,
+                    "ajax": {
+                        "url": "/cms/cms_table/" + inded_id,
+                        "dataSrc": "",
+                        "targets": -1,
+                        "dataType": "json",
+                        "contentType": "application/json; charset=utf-8"
+                    },
+
+                    "columns": [
+
+                        {"data": "indent_number"},
+                        {"data": "customer__company_name"},
+                        {"data": "indenttruckdetail__capacity__truck_capacity"},
+                        {"data": "indenttruckdetail__consignment_type"},
+                        {"data": "ftlindentservicemodal__advance_payment"},
+                        {"data": "ftlindentservicemodal__balance_payment"},
+                        {"data": "indentpickup__pick_up_address__address"},
+                        {"data": "indentpickup__pickup_date_time"},
+                        {"data": "indentdestination__destination_address__address"},
+                        {"data": "indentdestination__delivery_date_time"}
+
+
+                    ],
+                    "aoColumnDefs": [
+                        {'bSortable': false, 'aTargets': ["no-sort"]}
+                    ]
+                });
+            }
+
+
+            function all_data() {
+                $.ajax({
+                    type: 'GET',
+                    url: '/placement/indened_matched_contract_values/',
+                    dataType: 'json',
+                    data: {inded_id: inded_id},
+                    success: function (data1) {
+                        $('#kg_quantity').val(data1['truck_capacity']);
+
+                        if (data1['message'] === 'Quotation is Already Performed') {
+                            swal({
+                                title: "Quotation Message",
+                                text: (data1['message']),
+                                closeOnClickOutside: false,
+                                closeOnEsc: false
+                            }).then(function () {
+                                swal_ok_click()
+
+                            });
+
+
+
+
+
+
+                            $('#activity_count').val(data1['activity_count']);
+                            $('#id_truck_current_lat').val(data1['current_location_of_truck_lat']);
+                            $('#id_truck_current_lng').val(data1['current_location_of_truck_long']);
+                            $('#pair_id').val(data1['pair_id']);
+                            if (data1['truck_type'] === 'market') {
+                                $('#select_truck_type').selectedIndex = "3";
+                                console.log("__________________3_____________________________")
+                            }
+                            else {
+                                $('#select_truck_type').selectedIndex = "2"
+                                console.log("__________________2_____________________________")
+
+                            }
+                            $('#id_truck').val(data1['truck']);
+                            $('#id_driver').val(data1['driver']);
+                            $('#1').val(data1['pree_pick_up_to_pick_up_distance']);
+                            $('#2').val(data1['pree_pick_up_to_pick_up_rate']);
+                            $('#3').val(data1['pree_pick_up_to_pick_up_total']);
+                            $('#final_total').val(Math.round(data1['final_total']));
+                            $('#driver_final_total').val(Math.round(data1['driver_budget']));
+                            if ($('#driver_final_total').val() < 0) {
+                                $('#driver_final_total').val() == 0;
+                            }
+                            $('#current_location').val(data1['current_location_in_address']);
+
+                            $('#pick_to_desti').val(data1['pick_up_to_destination_rate']);
+                            $('#rate_pick_to_desti').val(data1['pick_up_to_destination_distance']);
+                            $('#cost_pick_to_desti').val(data1['pick_up_to_destination_total']);
+
+
+                            $('#total_rate_extra').val(Math.round(data1['avrage_rate']));
+                            $('#total_unit_extra').val(Math.round(data1['average_unit']));
+
+                            if ((data1['destination_total_is_in_driver'] === true) & (data1['pree_pick_up_total_is_in_driver'] === true)) {
+                                $('#inlineCheckbox2').prop("checked", true);
+                                $('#inlineCheckbox1').prop("checked", true);
+                                $('#1').prop('readOnly', true);
+                                $('#2').prop('readOnly', true);
+                                $('#3').prop('readOnly', true);
+                                $('#rate_pick_to_desti').prop('readOnly', true);
+                                $('#pick_to_desti').prop('readOnly', true);
+                                $('#cost_pick_to_desti').prop('readOnly', true);
+
+                            }
+                            if (data1['destination_total_is_in_driver'] === true) {
+                                $('#inlineCheckbox2').prop("checked", true);
+                                $('#rate_pick_to_desti').prop('readOnly', true);
+                                $('#pick_to_desti').prop('readOnly', true);
+                                $('#cost_pick_to_desti').prop('readOnly', true);
+
+                            }
+                            if (data1['pree_pick_up_total_is_in_driver'] === true) {
+                                $('#inlineCheckbox1').prop("checked", true);
+                                $('#1').prop('readOnly', true);
+                                $('#2').prop('readOnly', true);
+                                $('#3').prop('readOnly', true);
+                            }
+                            var total_units = parseFloat(0);
+                            var activity_total = parseFloat(0);
+
+                            for (i = 0; i < (parseInt(data1['activity_count'])); i++) {
+
+
+                                row_data = '<div class = "row">' +
+                                    '<div class="form-group col-md-8>' +
+                                    '<section class="tile">' +
+                                    '<div class="tile-body p-0">' +
+
+                                    '<table class="table table-bordered">' +
+                                    '<thead> ' +
+                                    '<tr>' +
+                                    ' <td width="20%"><input class="form-control" name="activity_p_' + i + '" type="text" id="activity_p_' + i + '" /></td>' +
+                                    ' <td width="13%"><input class="form-control"  type="text" id="total_p_' + i + '" name="total_p_' + i + '" onchange="findTotal_i(' + i + ')"></td>' +
+                                    ' <td width="10%"><input class="form-control" id="rate_p_' + i + '" name="rate_p_' + i + '" type="text" required></td>' +
+                                    ' <td width="22%" ><input class="form-control" id="cost_p_' + i + '" name="cost_p_' + i + '" type="text" required></td></td>' +
+                                    ' <td width="12%"><label class="checkbox-inline checkbox-custom">\n' +
+                                    '                                                    <input type="checkbox" name="in_driver_budget_p_' + i + '"\n' +
+                                    '                                                           id="inlineCheckbox_p_' + i + '"+\n' +
+                                    '                                                           onclick="checkBoxAddvalue1(this,' + i + ');"><i></i>\n' +
+                                    '                                                </label>' +
+                                    '</td>' +
+
+
+                                    '</tr>' +
+
+                                    '</tbody>' +
+
+                                    '</table>' +
+                                    '<input type="button" class="removebtn1" value="Remove" id="removebtn_' + i + '"/ >' +
+
+                                    ' </section>' +
+                                    '</div>' +
+
+                                    '</div>';
+                                $('#edit_table').append(row_data);
+
+
+
+
+
+
+
+
+
+                                $('#activity_p_' + String(i)).val(data1['activity_obj'][i].activity_name);
+                                $('#rate_p_' + String(i)).val(data1['activity_obj'][i].activity_unit);
+                                $('#total_p_' + String(i)).val(data1['activity_obj'][i].activity_unit);
+
+                                $('#rate_p_' + String(i)).val(data1['activity_obj'][i].activity_rate);
+                                $('#cost_p_' + String(i)).val(data1['activity_obj'][i].activity_total);
+
+                                if ((data1['activity_obj'][i].is_actuvity_added_in_driver) === true) {
+                                    $('#inlineCheckbox_p_' + String(i)).prop("checked", true);
+                                    $('#total_p_' + String(i)).prop('readOnly', true);
+                                    $('#rate_p_' + String(i)).prop('readOnly', true);
+                                    $('#cost_p_' + String(i)).prop('readOnly', true);
+                                }
+                                else if ((data1['activity_obj'][i].is_actuvity_added_in_driver) === false) {
+                                    $('#inlineCheckbox_p_' + String(i)).prop("checked", false);
+                                    $('#total_p_' + String(i)).prop('readOnly', false);
+                                    $('#rate_p_' + String(i)).prop('readOnly', false);
+                                    $('#cost_p_' + String(i)).prop('readOnly', false);
+                                }
+
+
+
+
+
+
+
+                                $('#id_truck').val(data1['truck']);
+
+                            }
+
+
+
+
+
+
+
+
+                            $('.removebtn1').on('click', function () {
+
+                                $('#activity_count').val(parseFloat($('#activity_count').val()) - 1);
+                                console.log("===============>", $('#inlineCheckbox_p_' + $('#activity_count').val()).val());
+                                var removed_final_total = $('#final_total').val();
+                                var remove_driver_budget = $('#driver_final_total').val();
+
+                                var after_sub = (parseFloat(removed_final_total) - parseFloat($('#cost_p_' + $('#activity_count').val()).val()));
+                                $('#final_total').val(after_sub);
+
+
+
+
+
+
+                                $(this).parent().remove();
+                            });
+
+
+                            if (data1['km_select'] === true) {
+                                $('#km_rate_id').val(data1['rate']);
+                                $('#km_quantity').val(data1['quantity']);
+                                $('#km_freight').val(data1['freight_charge']);
+                                $('#km_gst').val(data1['gst']);
+                                $('#km_id_invoice').val(data1['total_invoice']);
+                                $("#km_select").prop("checked", true);
+                                desableChargeOnWeight();
+                                desableChargeOnGross();
+                                $('#gross_select').prop('disabled', true);
+                                $('#kg_Select').prop('disabled', true);
+
+                            }
+                            else if (data1['kg_select'] === true) {
+                                $('#kg_rate').val(data1['rate']);
+                                $('#kg_quantity').val(data1['quantity']);
+                                $('#kg_freight').val(data1['freight_charge']);
+                                $('#kg_gst').val(data1['gst']);
+                                $('#kg_invoice').val(data1['total_invoice']);
+                                $("#kg_Select").prop("checked", true);
+                                desableChargeOnGross();
+                                desableChargeOnDistance();
+                                $('#gross_select').prop('disabled', true);
+                                $('#km_select').prop('disabled', true);
+
+                            }
+                            else if (data1['gross_select'] === true) {
+
+
+                                $('#gross_freight').val(data1['freight_charge']);
+                                $('#gross_gst').val(data1['gst']);
+                                $('#gross_invoice ').val(data1['total_invoice']);
+                                $("#gross_select").prop("checked", true);
+                                desableChargeOnDistance();
+                                desableChargeOnWeight();
+                                $('#kg_Select').prop('disabled', true);
+                                $('#km_select').prop('disabled', true);
+
+
+
+                            }
+                            $('#privious_location').show();
+                            priviousLocation();
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                        }
+
+
+
+
+
+
+
+
+
+
+
+                        else {
+
+                            swal({
+                                title: "Quotation Message",
+                                text: (data1['message']),
+                                closeOnClickOutside: false,
+                                closeOnEsc: false,
+                            });
+
+                            $('#privious_location').hide();
+
+                            enableChargeOnweight();
+                            enableChargeOnDistance();
+                            enableChargeGross();
+                            $('#driver_final_total').val(0);
+                            if ($('#driver_final_total').val() < 0) {
+                                $('#driver_final_total').val(0);
+                            }
+                            $('#inlineCheckbox1').prop("checked", false);
+                            $('#inlineCheckbox2').prop("checked", false);
+                            $('#km_select').prop("disabled", false);
+                            $('#kg_Select').prop("disabled", false);
+                            $('#gross_select').prop("disabled", false);
+
+
+                            $('#km_select').prop("checked", false);
+                            $('#kg_Select').prop("checked", false);
+                            $('#gross_select').prop("checked", false);
+
+                            $('#id_truck').val(" ");
+                            $('#id_driver').val(" ");
+
+                            if (data1['rate_type'] === 'rs/kg') {
+
+                                $('#kg_rate').val(data1['rate']);
+                                enableChargeOnweight();
+                                desableChargeOnDistance();
+                                desableChargeOnGross();
+                                $("#kg_Select").prop("checked", true);
+
+                                $('#kg_quantity').val(data1['truck_capacity']);
+                                $('#gross_select').prop('disabled', true);
+                                $('#km_select').prop('disabled', true);
+                                onLoadFreightChange();
+
+
+                            }
+                            else if (data1['rate_type'] === 'rs/km') {
+
+                                $('#km_rate_id').val(data1['rate']);
+                                enableChargeOnDistance();
+                                desableChargeOnGross();
+                                desableChargeOnWeight();
+                                $("#km_select").prop("checked", true);
+
+                                $('#kg_Select').prop('disabled', true);
+                                $('#gross_select').prop('disabled', true);
+
+                                $('#km_quantity').val(data1['total_distance']);
+                                onLoadFreightChange();
+
+                            }
+                            else if (data1['rate_type'] === 'GrossTotal') {
+                                $('#gross_freight').val(data1['rate']);
+                                desableChargeOnDistance();
+                                desableChargeOnWeight();
+                                enableChargeGross();
+                                $("#gross_select").prop("checked", true);
+
+                                $('#km_select').prop('disabled', true);
+
+                                $('#kg_Select').prop('disabled', true);
+                                onLoadFreightChange();
+
+
+                            }
+                            $('#pick_to_desti').val(data1['total_distance']);
+
+
+                        }
+
+
+
+                    }
+
+                });
+
+            }
+
+
+        }
+
+        function findTotal_i(i) {
+            pree_to_pick = $('#total_p_' + String(i)).val();
+            var total_cost = $('#total_p_' + String(i)).val();
+            total_cost = total_cost || 0;
+            var rate = $('#rate_p_' + String(i)).val();
+            rate = rate || 0;
+            var final_total = $('#cost_p_' + String(i)).val(parseFloat(total_cost) * parseFloat(rate));
+
+            addInTotl(i);
+
+        }
+
+        function addInTotl(i) {
+            var final_total = $('#final_total').val();
+            var cost = $('#cost_p_' + String(i)).val();
+
+            cost = cost || 0;
+            final_total = final_total || 0;
+
+
+            final_total = (parseFloat(final_total)) + (parseFloat(cost));
+
+            $('#final_total').val(Math.round(final_total));
+
+
+        }
+
+
+        function checkBoxAddvalue1(click, count) {
+            if (click.checked) {
+                pree_to_pick = $("#cost_p_" + String(count)).val();
+                var driver_final_total = $('#driver_final_total').val();
+                driver_final_total = driver_final_total || 0;
+                $('#driver_final_total').val(Math.round(parseFloat(driver_final_total) + parseFloat(pree_to_pick)));
+                if ($('#driver_final_total').val() < 0) {
+                    $('#driver_final_total').val(0);
+                }
+                $('#total_p_' + count).prop('readOnly', true);
+                $('#rate_p_' + count).prop('readOnly', true);
+                $('#cost_p_' + count).prop('readOnly', true);
+
+            } else {
+
+                pree_to_pick = $("#cost_p_" + String(count)).val();
+                var driver_final_total = $('#driver_final_total').val();
+                driver_final_total = driver_final_total || 0;
+                $('#driver_final_total').val(Math.round(parseFloat(driver_final_total) - parseFloat(pree_to_pick)));
+                if ($('#driver_final_total').val() < 0) {
+                    $('#driver_final_total').val(0);
+                }
+                $('#total_p_' + count).prop('readOnly', false);
+                $('#rate_p_' + count).prop('readOnly', false);
+                $('#cost_p_' + count).prop('readOnly', false);
+
+
+            }
+        }
+    </script>
+
+
+    <script type="text/javascript">
+        function onTruckchange() {
+
+            var inded_id = $('#indend').val();
+            var truck_id = $('#id_truck').val();
+            var points = null;
+            $('#driver_final_total').val(0);
+            $('#inlineCheckbox1').prop('checked', false);
+            $('#inlineCheckbox2').prop('checked', false);
+
+
+            $.ajax({
+                type: 'GET',
+                url: '/transporter/on_pair_driver_change/' + truck_id,
+                dataType: 'json',
+                data: {paramVal: truck_id},
+                success: function (data1) {
+                    $('#id_driver').val(data1['driver_id']);
+                    $('#pair_id').val(data1['pair_id']);
+                    console.log($('#pair_id').val());
+
+                    truckRates();
+                    $.ajax({
+                        type: 'GET',
+                        url: '',
+                        dataType: 'json',
+                        data: {inden_id: inded_id, truck_id: truck_id, pair_id: $('#pair_id').val()},
+                        success: function (data) {
+
+                            if (data === 'not found Latest Lat Long') {
+                                $("#current_location_div").show();
+                            }
+                            else {
+                                $("#current_location_div").show();
+                                rendermaps(data);
+
+                            }
+
+                        },
+                        error: function () {
+
+
+                        }
+                    });
+
+                }
+            });
+
+
+        }
+
+        function truckRates() {
+
+
+            var inded_id = $('#indend').val();
+            $.ajax({
+                type: 'GET',
+                url: '/placement/truck_driver_rates/',
+                dataType: 'json',
+                data: {'inden_id': inded_id, 'pair_id': $('#pair_id').val()},
+                success: function (data) {
+
+
+
+                    $('#rate_pick_to_desti').val(data['rate_pic_to_desti']);
+                    $('#2').val(data['rate_pree_pic_to_pic']);
+
+
+
+
+                    onLoadFreightChange();
+
+                    budget();
+
+
+                }
+
+
+            });
+
+        }
+    </script>
+
+
+    <script type="text/javascript">
+        function startShipment() {
+
+
+            $('#condition_check').val('start_shipment');
+
+
+        }
+
+
+        function saveAndExcel() {
+
+            $('#condition_check').val('excel_click');
+
+
+        }
+
+
+        var saveQoute = document.getElementById("saveQoute");
+
+        saveQoute.onclick = function () {
+            $('#condition_check').val('');
+        }
+
+
+    </script>
+
+    <script>
+        google.maps.event.addDomListener(window, 'load', initialize);
+
+        function initialize() {
+            var input = document.getElementById('current_location');
+            var autocomplete = new google.maps.places.Autocomplete(input);
+            autocomplete.addListener('place_changed', function () {
+                var place = autocomplete.getPlace();
+                try {
+                    var lat = place.geometry['location'].lat();
+                }
+                catch (e) {
+
+                    swal({
+                        title: "please try anoter nearest loacation",
+                        text: "",
+                        closeOnClickOutside: false,
+                        closeOnEsc: false,
+                    });
+                }
+                console.log(place.geometry['location'].lng());
+                var lan = place.geometry['location'].lng();
+                $('#id_truck_current_lat').val(lat);
+                $('#id_truck_current_lng').val(lan);
+                x(lat, lan);
+
+            });
+
+            function x(lat, long) {
+
+                if (lat === '' || long === '') {
+                    lat = 0;
+                    long = 0;
+
+                }
+
+
+                var inded_id = $('#indend').val();
+
+                $.ajax({
+                    type: 'GET',
+                    url: '/placement/total_distance_and_rate_truck_driver_pair/',
+                    dataType: 'json',
+                    data: {'lat': lat, 'long': long, 'inden_id': inded_id, 'pair_id': $('#pair_id').val()},
+                    success: function (data) {
+
+
+                        pic_lat = data['lat'];
+                        pic_log = data['log'];
+                        pick_up = [pic_lat, pic_log];
+                        dest_lat = data['lat'];
+                        dest_log = data['log'];
+                        desti = [dest_lat, dest_log];
+                        truck_lat = data['latitude'];
+                        truck_log = data['longitude'];
+                        points = [pick_up, desti];
+
+                        var locations = [[pic_lat, pic_log], [dest_lat, dest_log], [truck_lat, truck_log]];
+
+
+
+
+
+
+
+                        $('#rate_pick_to_desti').val(data['rate_pic_to_desti']);
+                        $('#2').val(data['rate_pree_pic_to_pic']);
+                        $('#1').val(data['final_pree_pic_up_to_pic_up_distance']);
+                        $('#km_quantity').val(data['final_distance']);
+
+
+                        onLoadFreightChange();
+
+
+                    }
+
+
+                });
+            }
+        }
+
+
+    </script>
+
+    <script type="text/javascript">
+
+
+        function transpoteChangeOnCalculateDistance() {
+            var rate = $('#km_rate_id').val();
+
+
+            var quantity = $('#km_quantity').val();
+            if ($('#1').val() & ($('#pick_to_desti').val())) {
+                $('#km_quantity').val(parseFloat($('#1').val()) + parseFloat($('#pick_to_desti').val()));
+            }
+            else {
+                var quantity = $('#km_quantity').val();
+            }
+
+            var freight = $('#km_freight').val();
+            var gst = $('#km_gst').val();
+            var invoice = $('#km_id_invoice').val();
+            rate = rate || 0;
+            quantity = quantity || 0;
+            freight = freight || 0;
+            gst = gst || 0;
+            var actual_freight = ((parseFloat(rate)) * parseFloat(quantity));
+            $('#km_freight').val(actual_freight);
+            actual_freight = actual_freight || 0;
+            invoice = invoice || 0;
+            if (parseFloat(gst) !== 0) {
+                var cal = (parseFloat(actual_freight) * (parseFloat(gst)) / 100);
+                var final = (parseFloat(actual_freight) + parseFloat(cal));
+                $('#km_id_invoice').val(final);
+            }
+            else {
+                $('#km_freight').val(actual_freight);
+                invoice = ((actual_freight));
+                $('#km_id_invoice').val(invoice);
+            }
+        }
+
+        function transpoteChangeOnCalculateWeight() {
+
+            var rate = $('#kg_rate').val();
+            var quantity = $('#kg_quantity').val();
+
+
+
+
+
+
+
+
+
+            var freight = $('#kg_freight').val();
+            var gst = $('#kg_gst').val();
+            var invoice = $('#kg_invoice').val();
+            rate = rate || 0;
+            quantity = quantity || 0;
+            freight = freight || 0;
+            gst = gst || 0;
+            var actual_freight = ((parseFloat(rate) * 1000) * parseFloat(quantity));
+
+            actual_freight = actual_freight || 0;
+            $('#kg_freight').val(actual_freight);
+            invoice = invoice || 0;
+            if (parseFloat(gst) !== 0) {
+                var cal = (parseFloat(actual_freight) * (parseFloat(gst)) / 100);
+                var final = (parseFloat(actual_freight) + parseFloat(cal));
+                $('#kg_invoice').val(final);
+            }
+            else {
+                $('#kg_freight').val(actual_freight);
+                invoice = ((actual_freight));
+                $('#kg_invoice').val(invoice);
+            }
+
+        }
+
+        function transpoteChangeOnCalculateGross() {
+
+            var freight = $('#gross_freight').val();
+            var gst = $('#gross_gst').val();
+            var invoice = $('#gross_invoice').val();
+
+            freight = freight || 0;
+            gst = gst || 0;
+            invoice = invoice || 0;
+            if (parseFloat(gst) !== 0) {
+                var cal = (parseFloat(freight) * (parseFloat(gst)) / 100);
+                var final = (parseFloat(freight) + parseFloat(cal));
+                $('#gross_invoice').val(final);
+            }
+            else {
+                $('#gross_freight').val(freight);
+                invoice = ((freight));
+                $('#gross_invoice').val(invoice);
+            }
+        }
+
+        function preePicUpToPicUp() {
+            var pree_pic_to_pic_distance = $('#1').val();
+            var pree_pic_to_pic_rate = $('#2').val();
+            var pree_pic_to_pic_cost = $('#3').val();
+
+            var final_total = $('#final_total').val();
+            var driver_budget = $('#driver_final_total').val();
+            if ($('#driver_final_total').val() < 0) {
+                $('#driver_final_total').val(0);
+            }
+            pree_pic_to_pic_distance = pree_pic_to_pic_distance || 0;
+            pree_pic_to_pic_rate = pree_pic_to_pic_rate || 0;
+            driver_budget = driver_budget || 0;
+
+            pree_pic_to_pic_cost = ((parseFloat(pree_pic_to_pic_distance)) * (parseFloat(pree_pic_to_pic_rate)));
+            pree_pic_to_pic_cost = pree_pic_to_pic_cost || 0;
+            $('#3').val(pree_pic_to_pic_cost);
+
+            final_total = final_total || 0;
+
+
+            budget();
+
+
+        }
+
+        function picUpToDestination() {
+            var pic_to_desti_distance = $('#pick_to_desti').val();
+            var pic_to_desti_rate = $('#rate_pick_to_desti').val();
+            var pic_to_desti_cost = $('#cost_pick_to_desti').val();
+            pic_to_desti_distance = pic_to_desti_distance || 0;
+            pic_to_desti_rate = pic_to_desti_rate || 0;
+
+            pic_to_desti_cost = ((parseFloat(pic_to_desti_distance)) * (parseFloat(pic_to_desti_rate)));
+            pic_to_desti_cost = pic_to_desti_cost || 0;
+            $('#cost_pick_to_desti').val(pic_to_desti_cost);
+            budget();
+        }
+
+        function budget() {
+            var final_total = $('#final_total').val();
+            var pree_pic_to_pic_cost = $('#3').val();
+            var pic_to_desti_cost = $('#cost_pick_to_desti').val();
+            pree_pic_to_pic_cost = pree_pic_to_pic_cost || 0;
+            final_total = final_total || 0;
+            pic_to_desti_cost = pic_to_desti_cost || 0;
+
+            final_total = (parseFloat(pic_to_desti_cost)) + (parseFloat(pree_pic_to_pic_cost));
+
+            $('#final_total').val(Math.round(final_total));
+        }
+
+        function preePickUptoPickSelection(checkboxElem) {
+            if (checkboxElem.checked) {
+                pree_pic_to_pic = $('#3').val();
+                pree_pic_to_pic = pree_pic_to_pic || 0;
+                var driver_final_total = $('#driver_final_total').val();
+                driver_final_total = driver_final_total || 0;
+                $('#driver_final_total').val(Math.round(parseFloat(driver_final_total) + parseFloat(pree_pic_to_pic)));
+                if ($('#driver_final_total').val() < 0) {
+                    $('#driver_final_total').val(0);
+                }
+                $('#1').prop('readOnly', true);
+                $('#2').prop('readOnly', true);
+                $('#3').prop('readOnly', true);
+
+
+            } else {
+                pree_pic_to_pic = $('#3').val();
+                pree_pic_to_pic = pree_pic_to_pic || 0;
+
+                $('#driver_final_total').val(Math.round(parseFloat($('#driver_final_total').val()) - parseFloat(pree_pic_to_pic)));
+                if ($('#driver_final_total').val() < 0) {
+                    $('#driver_final_total').val(0);
+                }
+                $('#1').prop('readOnly', false);
+                $('#2').prop('readOnly', false);
+                $('#3').prop('readOnly', false);
+            }
+        }
+
+        function picUpToDestinationSelection(checkboxElem) {
+            if (checkboxElem.checked) {
+                pi_up_to_destination = $('#cost_pick_to_desti').val();
+                pi_up_to_destination = pi_up_to_destination || 0;
+                var driver_final_total = $('#driver_final_total').val();
+                driver_final_total = driver_final_total || 0;
+                $('#driver_final_total').val(Math.round(parseFloat(driver_final_total) + parseFloat(pi_up_to_destination)));
+                if ($('#driver_final_total').val() < 0) {
+                    $('#driver_final_total').val(0);
+                }
+                $('#rate_pick_to_desti').prop('readOnly', true);
+                $('#pick_to_desti').prop('readOnly', true);
+                $('#cost_pick_to_desti').prop('readOnly', true);
+
+
+            } else {
+                pi_up_to_destination = $('#cost_pick_to_desti').val();
+                pi_up_to_destination = pi_up_to_destination || 0;
+
+                $('#driver_final_total').val(Math.round(parseFloat($('#driver_final_total').val()) - parseFloat(pi_up_to_destination)));
+                if ($('#driver_final_total').val() < 0) {
+                    $('#driver_final_total').val(0);
+                }
+                $('#rate_pick_to_desti').prop('readOnly', false);
+                $('#pick_to_desti').prop('readOnly', false);
+                $('#cost_pick_to_desti').prop('readOnly', false);
+
+            }
+        }
+
+        function driverBudgetSelection(checkboxElem) {
+            var final_total = $('#final_total').val();
+
+            if (checkboxElem.checked) {
+                $('#inlineCheckbox2').prop("checked", true);
+                $('#inlineCheckbox1').prop("checked", true);
+
+
+                $('#driver_final_total').val(final_total);
+                $('#2').prop('readOnly', true);
+                $('#3').prop('readOnly', true);
+
+            }
+            else {
+                $('#inlineCheckbox2').prop("checked", false);
+                $('#inlineCheckbox1').prop("checked", false);
+                $('#1').prop('readOnly', false);
+                $('#2').prop('readOnly', false);
+                $('#3').prop('readOnly', false);
+                $('#inlineCheckbox1').prop('readOnly', false);
+                $('#driver_final_total').val(0);
+            }
+
+
+            var privious_activity_count = parseFloat($('#activity_count').val());
+
+            if (privious_activity_count === 1) {
+
+
+                for (var i = 0; i < privious_activity_count; i++) {
+
+                    if (checkboxElem.checked) {
+                        $('#inlineCheckbox_p_' + i).prop("checked", true);
+                        $('#1').prop('readOnly', true);
+                        $('#2').prop('readOnly', true);
+                        $('#3').prop('readOnly', true);
+                        $('#inlineCheckbox1').prop('readOnly', true);
+
+                        $('#driver_final_total').val(final_total)
+                    }
+                    else {
+                        $('#inlineCheckbox_p_' + i).prop("checked", false);
+
+
+                        $('#driver_final_total').val(0)
+                    }
+                }
+            }
+        }
+    </script>
+
+    <script type="application/javascript">
+
+        window.count = 0;
+
+        function add_new_entry2() {
+            row_data = '<div class = "row">' +
+                '<div class="form-group col-md-8>' +
+                '<section class="tile">' +
+                '<div class="tile-body p-0">' +
+
+                '<table class="table table-bordered">' +
+                '<thead> ' +
+                '<tr>' +
+                ' <td width="20%"><input class="form-control" name="activity_' + window.count + '" type="text" id="activity_' + window.count + '" /></td>' +
+                ' <td width="13%"><input class="form-control"  type="text" id="total_' + window.count + '" name="total_' + window.count + '" onchange="findTotal_count(' + window.count + ')"></td>' +
+                ' <td width="10%"><input class="form-control" id="rate_' + window.count + '" name="rate_' + window.count + '" type="text" required onchange="findTotal_count(' + window.count + ')"></td>' +
+                ' <td width="22%" ><input class="form-control" id="cost_' + window.count + '" name="cost_' + window.count + '" type="text" required></td></td>' +
+                ' <td width="12%"><label class="checkbox-inline checkbox-custom">\n' +
+                '                                                    <input type="checkbox" name="in_driver_budget_' + window.count + '"\n' +
+                '                                                           id="inlineCheckbox_' + window.count + '"+\n' +
+                '                                                           onclick="checkBoxAddvalue_increment(this,' + window.count + ');"><i></i>\n' +
+                '                                                </label>' +
+                '</td>' +
+                '</tr>' +
+                '</tbody>' +
+                '</table>' +
+                '<input type="button" class="removebtn" value="Remove" id="removebtn_' + window.count + '" onclick= "remove(' + window.count + ')" >' +
+                ' </section>' +
+                '</div>' +
+
+                '</div>';
+            $('#id_parent2').append(row_data);
+            //$('#id_parent2').append(row_data);
+
+            document.getElementById("insert2").value = window.count;
+
+
+            $('.removebtn').on('click', function () {
+
+
+                $('#activity_count').val(parseFloat($('#activity_count').val()) - 1);
+
+                window.count = window.count - 1;
+                $(this).parent().remove();
+
+            });
+
+            window.count = window.count + 1;
+
+        }
+
+    </script>
+    <script type="application/javascript">
+
+        window.count = 0;
+
+        function add_new_entry() {
+            row_data = '<div class = "row">' +
+                '<div class="form-group col-md-8>' +
+                '<section class="tile">' +
+                '<div class="tile-body p-0">' +
+
+                '<table class="table table-bordered">' +
+                '<thead> ' +
+                '<tr>' +
+                ' <td width="20%"><input class="form-control" name="activity_' + window.count + '" type="text" id="activity_' + window.count + '" /></td>' +
+                ' <td width="13%"><input class="form-control"  type="text" id="total_' + window.count + '" name="total_' + window.count + '" onchange="findTotal_count(' + window.count + ')"></td>' +
+                ' <td width="10%"><input class="form-control" id="rate_' + window.count + '" name="rate_' + window.count + '" type="text" required onchange="findTotal_count(' + window.count + ')"></td>' +
+                ' <td width="22%" ><input class="form-control" id="cost_' + window.count + '" name="cost_' + window.count + '" type="text" required></td></td>' +
+                ' <td width="12%"><label class="checkbox-inline checkbox-custom">\n' +
+                '                                                    <input type="checkbox" name="in_driver_budget_' + window.count + '"\n' +
+                '                                                           id="inlineCheckbox_' + window.count + '"+\n' +
+                '                                                           onclick="checkBoxAddvalue_increment(this,' + window.count + ');"><i></i>\n' +
+                '                                                </label>' +
+                '</td>' +
+                '</tr>' +
+                '</tbody>' +
+                '</table>' +
+                '<input type="button" class="removebtn" value="Remove" id="removebtn_' + window.count + '" onclick= "remove(' + window.count + ')" >' +
+                ' </section>' +
+                '</div>' +
+
+                '</div>';
+            $('#id_parent').append(row_data);
+            //$('#id_parent2').append(row_data);
+
+            document.getElementById("insert").value = window.count;
+
+
+            $('.removebtn').on('click', function () {
+
+
+                $('#activity_count').val(parseFloat($('#activity_count').val()) - 1);
+
+                window.count = window.count - 1;
+                $(this).parent().remove();
+
+            });
+
+            window.count = window.count + 1;
+
+        }
+
+
+        function remove(count) {
+            final_total = $('#final_total').val();
+            cost_total = $('#cost_' + String(count)).val();
+
+            cost_total = cost_total || 0;
+            final_total = final_total || 0;
+
+            $('#final_total').val(parseFloat(final_total) - parseFloat(cost_total));
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            if ($('#inlineCheckbox_' + String(count)).val() == "on") {
+
+                $('#driver_final_total').val(Math.round(parseFloat($('#driver_final_total').val()) - parseFloat($('#cost_' + String(count)).val())));
+                if ($('#driver_final_total').val() < 0) {
+                    $('#driver_final_total').val(0);
+                }
+
+
+            }
+
+        }
+
+        function findTotal_count(count_window) {
+            pree_to_pick = $('#total_' + String(count_window)).val();
+            var total_cost = $('#total_' + String(count_window)).val();
+            total_cost = total_cost || 0;
+
+            var rate = $('#rate_' + String(count_window)).val();
+
+            rate = rate || 0;
+
+            $('#cost_' + String(count_window)).val(parseFloat(total_cost) * parseFloat(rate));
+            addInTotl_window(count_window)
+
+        }
+
+
+        function checkBoxAddvalue_increment(checkboxElem, count) {
+
+            if (checkboxElem.checked) {
+
+                pree_to_pick = $("#cost_" + String(count)).val();
+                var driver_final_total = $('#driver_final_total').val();
+                driver_final_total = driver_final_total || 0;
+                $('#driver_final_total').val(Math.round(parseFloat(driver_final_total) + parseFloat(pree_to_pick)));
+                if ($('#driver_final_total').val() < 0) {
+                    $('#driver_final_total').val(0);
+                }
+
+                $('#total_' + count).prop('readOnly', true);
+                $('#rate_' + count).prop('readOnly', true);
+                $('#cost_' + count).prop('readOnly', true);
+
+            } else {
+
+                pree_to_pick = $("#cost_" + String(count)).val();
+                var driver_final_total = $('#driver_final_total').val();
+                driver_final_total = driver_final_total || 0;
+                $('#driver_final_total').val(Math.round(parseFloat(driver_final_total) - parseFloat(pree_to_pick)));
+                if ($('#driver_final_total').val() < 0) {
+                    $('#driver_final_total').val(0);
+                }
+                $('#total_' + count).prop('readOnly', false);
+                $('#rate_' + count).prop('readOnly', false);
+                $('#cost_' + count).prop('readOnly', false);
+
+
+            }
+        }
+
+        function addInTotl_window(i) {
+            var final_total = $('#final_total').val();
+            var cost = $('#cost_' + String(i)).val();
+
+            cost = cost || 0;
+            final_total = final_total || 0;
+
+
+            final_total = (parseFloat(final_total)) + (parseFloat(cost));
+
+            $('#final_total').val(final_total);
+
+            var rates = $('#rate_' + String(i)).val();
+            rates = rates || 0;
+            var total_units = $('#total_unit_extra').val();
+            total_units = total_units || 0;
+            $('#total_unit_extra').val(parseFloat(total_units) + parseFloat(rates));
+
+            var final_total = $('#final_total').val();
+            final_total = final_total || 0;
+            var total_units_extra = $('#total_unit_extra').val();
+            total_units_extra = total_units_extra || 0;
+            $('#total_rate_extra').val(Math.round(parseFloat(final_total) / parseFloat(total_units_extra)));
+
+
+        }
+
+    </script>
+
+    <script type="text/javascript">
+        function add_new_div() {
+            $('#add_new_div').on('click', function () {
+                {
+                    $('#id_parent').show();
+                }
+
+
+            });
+        }
+
+        function add_new_div2() {
+            $('#add_new_div2').on('click', function () {
+                {
+                    $('#id_parent2').show();
+                }
+
+
+            });
+        }
+
+
+    </script>
+
+    <script type="text/javascript">
+
+        function avrageRateCalculation() {
+
+
+            var pree_pic = $('#1').val();
+            pree_pic = pree_pic || 0;
+            var pic_to_desti = $('#pick_to_desti').val();
+            pic_to_desti = pic_to_desti || 0;
+
+            $('#total_unit_extra').val(Math.round(parseFloat(pree_pic) + parseFloat(pic_to_desti)));
+
+
+            var rate_pree_pic = $('#2').val();
+            rate_pree_pic = rate_pree_pic || 0;
+            var rate_pic_to_desti = $('#rate_pick_to_desti').val();
+            rate_pic_to_desti = rate_pic_to_desti || 0;
+
+            var final_total = $('#final_total').val();
+            final_total = final_total || 0;
+            var total_units = $('#total_unit_extra').val();
+            total_units = total_units || 0;
+
+            $('#total_rate_extra').val(Math.round(parseFloat(final_total) / parseFloat(total_units)));
+        }
+    </script>
+
+
+    <script type="text/javascript">
+        function priviousLocation() {
+            var lat = parseFloat(document.getElementById("id_truck_current_lat").value);
+            var lng = parseFloat(document.getElementById("id_truck_current_lng").value);
+            var latlng = new google.maps.LatLng(lat, lng);
+            var geocoder = geocoder = new google.maps.Geocoder();
+            geocoder.geocode({'latLng': latlng}, function (results, status) {
+                if (status == google.maps.GeocoderStatus.OK) {
+                    if (results[1]) {
+
+                        $('#address').val(results[1].formatted_address);
+
+
+
+                    }
+                }
+            });
+        }
+    </script>
+
+    <script language='javascript'>
+        function happycode() {
+            $('#address_1').hide();
+        }
+
+        window.onload = happycode;
+
+        function Myfunction1(param) {
+            add_vendor_button_clicked = param;
+            $('#myModal1').modal('show');
+
+        }
+
+
+    </script>
+    <script>
+        function happycode() {
+            $('#address_1').hide();
+        }
+
+        window.onload = happycode;
+
+
+        function backvendor(param) {
+            add_vendor_button_clicked = param;
+            $('#myModal1').modal('show');
+            $('#myModal2').modal('hide');
+        }
+
+        function backtruck(param) {
+            add_vendor_button_clicked = param;
+            $('#myModal2').modal('show');
+            $('#myModal3').modal('hide')
+        }
+
+    </script>
+    <script language="javascript">
+        $('#deductee_type').change(function () {
+            if ($('#deductee_type').val() == 'company') {
+                $("#tds_rate").val(2);
+            }
+            else {
+                $("#tds_rate").val(1);
+            }
+        });
+    </script>
+
+    <script type="text/javascript">
+        function uniqueTruckLicence() {
+
+            var licence_number = $('#unique_truck_licence').val();
+
+            $.ajax({
+                type: 'GET',
+                url: '/transporter/unique_truck_licence/',
+                dataType: 'json',
+                data: {licence_number: licence_number},
+                success: function (data) {
+
+                    $("#unique_truck_licence").val(data);
+                    var data = $("#unique_truck_licence").val(data);
+
+                    var data1 = document.getElementById("unique_truck_licence").value;
+
+                    if (data1 === "Allready Registerd") {
+
+
+                        swal({
+                            title: "Truck Number Already Exists",
+                            text: licence_number,
+                            icon: "error",
+                            closeOnClickOutside: false,
+                            closeOnEsc: false,
+                        });
+
+                        document.getElementById("unique_truck_licence").value = "";
+                    }
+
+
+                }
+            });
+
+
+        }
+
+    </script>
+    <script>
+
+        var market_pair_id = "";
+        var market_vehicle_id = "";
+        var market_driver_id = '';
+
+        function addVendor() {
+            if ($('#add_vendor').parsley().isValid()) {
+                $('#myModal2').modal('show');
+                $('#myModal1').modal('hide');
+            }
+            else {
+
+
+                swal({
+                    title: "Please Fill All The Details",
+                    text: "",
+                    icon: "error",
+                    closeOnClickOutside: false,
+                    closeOnEsc: false,
+
+                });
+
+            }
+
+
+        }
+
+        function addTruck() {
+            if ($('#add_truck').parsley().isValid()) {
+                $('#myModal2').modal('hide');
+                $('#myModal3').modal('show');
+            }
+            else {
+
+                swal({
+                    title: "Please Fill All The Details",
+                    text: "",
+                    icon: "error",
+                    closeOnClickOutside: false,
+                    closeOnEsc: false,
+                });
+
+            }
+
+            function pair_all() {
+
+                if ($('#add_driver').parsley().isValid()) {
+                    var vendor_name = document.getElementById("vendor_name").value;
+                    var last_name = document.getElementById("last_name").value;
+                    var first_name = document.getElementById("first_name").value;
+                    var mobile_number = document.getElementById("mobile_number").value;
+                    var pan_no = document.getElementById("pan_no").value;
+                    var deductee_type = document.getElementById("deductee_type").value;
+                    var tds_rate = document.getElementById("tds_rate").value;
+                    var new_vendor_id = document.getElementById("new_vendor_id").value;
+
+                }
+
+                var send_data = {
+                    "new_vendor_id": new_vendor_id,
+                    "vendor_name": vendor_name,
+                    "last_name": last_name,
+                    "first_name": first_name,
+                    "mobile_number": mobile_number,
+                    "pan_no": pan_no,
+                    "deductee_type": deductee_type,
+                    "tds_rate": tds_rate,
+                    'csrfmiddlewaretoken': $('input[name="csrfmiddlewaretoken"]').val()
+                };
+
+                $.ajax({
+                    url: "/market_vehicle/add_vendor/",
+                    type: "POST",
+                    data: send_data,
+                    success: function (data) {
+
+                        vendor_id = data;
+                        var truck_length = $("#truck_length").val();
+                        var truck_capacity = $("#truck_capacity").val();
+                        var truck_type = $("#truck_type").val();
+                        var license_number = $("#unique_truck_licence").val();
+                        var owner_type = $("#owner_type").val();
+                        var mobile_number = $("#id_mobile_number").val();
+                        var mobile_operator = $("#mobile_operator").val();
+                        var market_truck_id = $("#market_truck_id").val();
+
+                        var vendor_data = {
+                            "market_truck_id": market_truck_id,
+                            "truck_length": truck_length,
+                            "truck_capacity": truck_capacity,
+                            "truck_type": truck_type,
+                            "license_number": license_number,
+                            "owner_type": owner_type,
+                            "mobile_number": mobile_number,
+                            "mobile_operator": mobile_operator,
+                            'csrfmiddlewaretoken': $('input[name="csrfmiddlewaretoken"]').val()
+                        };
+
+                        $.ajax({
+                            url: "/transporter/add_truck/",
+                            type: "POST",
+                            data: vendor_data,
+                            success: function (data) {
+                                market_vehicle_id = data;
+                                var driver_name = $("#driver_name").val();
+                                var mobile_number = $("#driver_mobile_number").val();
+                                var truck = $("#market_truck_id").val();
+                                var check_market_driver = $("#market_driver_id").val();
+                                var driver_mobile_operator = $("#driver_mobile_operator").val();
+                                var distance_empty = 0;
+                                var distance_load = 0;
+                                var weight_empty = 0;
+
+                                var driver_data = {
+                                    "driver_name": driver_name,
+                                    "owner_type": 'market',
+                                    "driver_mobile_number": mobile_number,
+                                    "check_market_driver": check_market_driver,
+                                    "driver_mobile_operator": driver_mobile_operator,
+                                    'csrfmiddlewaretoken': $('input[name="csrfmiddlewaretoken"]').val()
+
+                                };
+
+                                $.ajax({
+                                    url: "/transporter/add_driver/",
+                                    type: "POST",
+                                    data: driver_data,
+                                    success: function (data) {
+                                        market_driver_id = data;
+
+                                        var pair_all_data = {
+                                            "truck": market_vehicle_id,
+                                            "driver": market_driver_id,
+                                            "distance_empty": distance_empty,
+                                            "distance_load": distance_load,
+                                            "weight_load": weight_empty, "market_pair": "market_pair",
+                                            "placement": "placement",
+
+                                            'csrfmiddlewaretoken': $('input[name="csrfmiddlewaretoken"]').val()
+                                        };
+                                        $.ajax({
+                                            url: "",
+                                            type: "POST",
+                                            data: pair_all_data,
+                                            success: function (data) {
+                                                var pair_id_data = {
+                                                    "truck": market_vehicle_id,
+                                                    "driver": market_driver_id,
+
+                                                    'csrfmiddlewaretoken': $('input[name="csrfmiddlewaretoken"]').val()
+                                                };
+                                                $.ajax({
+                                                    url: "/transporter/pair_id/",
+                                                    type: "POST",
+                                                    data: pair_id_data,
+                                                    success: function (data) {
+                                                        market_pair_id = data[0]['id'];
+
+
+                                                        var pair_data = {
+                                                            "market_pair_id": market_pair_id,
+                                                            "vender": vendor_id,
+                                                            'csrfmiddlewaretoken': $('input[name="csrfmiddlewaretoken"]').val()
+                                                        };
+                                                        $.ajax({
+                                                            url: "/market_vehicle/vendor_pair/",
+                                                            type: "POST",
+                                                            data: pair_data,
+                                                            success: function () {
+                                                                var pair_id = market_pair_id;
+
+                                                                $.ajax({
+                                                                    type: 'GET',
+                                                                    url: '/market_vehicle/truck_driver/',
+                                                                    dataType: 'json',
+                                                                    data: {'pair_id': pair_id},
+                                                                    success: function (data) {
+                                                                        $.each(data, function (i, items) {
+                                                                            $('#id_truck').append($('<option>', {
+                                                                                value: items.transporter_truck_id,
+                                                                                text: items.transporter_truck__vehicle_license_number,
+                                                                                selected: true
+
+                                                                            }));
+
+
+                                                                            console.log('vl')
+                                                                        });
+                                                                        $.each(data, function (i, items) {
+                                                                            $('#id_driver').append($('<option>', {
+                                                                                value: items.transporter_driver_id,
+                                                                                text: items.transporter_driver__driver_name,
+                                                                                selected: true
+                                                                            }));
+
+                                                                        });
+                                                                        $('#myModal3').modal('hide');
+
+
+                                                                        $("#truck_length").val('');
+
+                                                                        $("#truck_capacity").val('');
+                                                                        $("#truck_type").val('');
+                                                                        $("#unique_truck_licence").val('');
+                                                                        $("#owner_type").val('');
+                                                                        $("#id_mobile_number").val('');
+                                                                        $("#mobile_operator").val('');
+                                                                        $("#market_truck_id").val('');
+                                                                        //Vendor
+                                                                        document.getElementById("vendor_name").value = '';
+                                                                        document.getElementById("last_name").value = '';
+                                                                        document.getElementById("first_name").value = '';
+                                                                        document.getElementById("mobile_number").value = '';
+                                                                        document.getElementById("pan_no").value = '';
+                                                                        document.getElementById("deductee_type").value = '';
+                                                                        document.getElementById("tds_rate").value = '';
+                                                                        document.getElementById("new_vendor_id").value = '';
+                                                                        //Driver
+                                                                        document.getElementById("driver_name").value = '';
+                                                                        document.getElementById("driver_mobile_number").value = '';
+                                                                        document.getElementById("driver_mobile_operator").value = '';
+
+                                                                    }
+                                                                })
+                                                            }
+                                                        })
+                                                    }
+                                                })
+                                            }
+                                        })
+
+                                    }
+
+
+                                })
+
+                            }
+
+                        })
+
+
+                    }
+
+                })
+
+            }
+        }
+
+
+    </script>
+    <script>
+        function ExistingVendorTruckDriver() {
+            $('#existing_vendor_truck_driver').modal('show');
+            $.ajax({
+                url: "/market_vehicle/vendor_truck_driver_pair/",
+                type: "POST",
+                success: function (data) {
+                    var v_name = (data[0]['vender']);
+                    var t_number = (data[1]['truck']);
+                    var d_name = (data[2]['driver']);
+                    $('#vendorname').empty();
+                    $('#vendorname').append($('<option>', {
+                        text: "Select Vendor"
+                    }));
+                    $.each(v_name, function (i, obj) {
+                        var v_value = "<option value=" + obj.id + ">" + obj.vender_name + "</option>";
+                        $(v_value).appendTo('#vendorname');
+                    });
+                    $('#markettruck').empty();
+                    $('#markettruck').append($('<option>', {
+                        text: "Select_number"
+                    }));
+                    $.each(t_number, function (i, obj) {
+                        var t_value = "<option value=" + obj.id + ">" + obj.vehicle_license_number + "</option>";
+                        $(t_value).appendTo('#markettruck');
+                    });
+                    $('#marketdriver').empty();
+                    $('#marketdriver').append($('<option>', {
+                        text: "Select Driver"
+                    }));
+                    $.each(d_name, function (i, obj) {
+                        var d_value = "<option value=" + obj.id + ">" + obj.driver_name + "</option>";
+                        $(d_value).appendTo('#marketdriver');
+
+                    });
+                }
+            })
+
+        }
+
+    </script>
+    <script>
+        function MarketVendorTruckDriver() {
+            var v_id = $("#vendorname").val();
+            var t_id = $("#markettruck").val();
+            var d_id = $("#marketdriver").val();
+            var distance_empty = 0;
+            var distance_load = 0;
+            var weight_empty = 0;
+
+            var pair_all_data = {
+                "truck": t_id,
+
+                "driver": d_id,
+                "distance_empty": distance_empty,
+                "distance_load": distance_load,
+                "weight_load": weight_empty,
+                "market_pair": "market_pair",
+
+                'csrfmiddlewaretoken': $('input[name="csrfmiddlewaretoken"]').val()
+            };
+            $.ajax({
+                url: "/transporter/pair_truck_driver/",
+                type: "POST",
+                data: pair_all_data,
+                success: function (data) {
+                    var pair_id_data = {
+                        "truck": t_id,
+                        "driver": d_id,
+                        'csrfmiddlewaretoken': $('input[name="csrfmiddlewaretoken"]').val()
+                    };
+                    $.ajax({
+                        url: "/transporter/pair_id/",
+                        type: "POST",
+                        data: pair_id_data,
+                        success: function (data) {
+
+                            var marketpair_id = data[0]['id'];
+
+                            var pair_data = {
+                                "market_pair_id": marketpair_id,
+                                "vender": v_id,
+                                'csrfmiddlewaretoken': $('input[name="csrfmiddlewaretoken"]').val()
+                            };
+                            $.ajax({
+                                url: "/market_vehicle/vendor_pair/",
+                                type: "POST",
+                                data: pair_data,
+                                success: function () {
+                                    var pair_id = marketpair_id;
+                                    console.log('weeretrg5yrer', pair_id)
+                                    $.ajax({
+                                        type: 'GET',
+                                        url: '/market_vehicle/truck_driver/',
+                                        dataType: 'json',
+                                        data: {'pair_id': pair_id},
+                                        success: function (data) {
+
+                                            $.each(data, function (i, items) {
+                                                $('#id_truck').append($('<option>', {
+                                                    value: items.transporter_truck_id,
+                                                    text: items.transporter_truck__vehicle_license_number,
+                                                    selected: true
+
+                                                }));
+
+
+                                                console.log('vl')
+                                            });
+                                            $.each(data, function (i, items) {
+                                                $('#id_driver').append($('<option>', {
+                                                    value: items.transporter_driver_id,
+                                                    text: items.transporter_driver__driver_name,
+                                                    text: items.transporter_driver__driver_name,
+                                                    selected: true
+
+                                                }));
+
+                                                console.log('vfyiukhjji')
+                                            });
+
+                                            $('#existing_vendor_truck_driver').modal('hide');
+
+                                        }
+
+                                    });
+                                }
+                            })
+                        }
+                    })
+                }
+            })
+        }
+
+
+    </script>
+    <script>
+        function MarketVendorTruckPair() {
+
+            var v_id = $("#vendorname_2").val();
+            var t_id = $("#markettruck_2").val();
+
+            var pair_data = {
+                "market_pair_id": t_id,
+                "vender": v_id,
+                'csrfmiddlewaretoken': $('input[name="csrfmiddlewaretoken"]').val()
+            };
+            $.ajax({
+                url: "/market_vehicle/vendor_pair/",
+                type: "POST",
+                data: pair_data,
+                success: function () {
+                    var pair_id = ($("#markettruck_2").val());
+                    $.ajax({
+                        type: 'GET',
+                        url: '/market_vehicle/truck_driver/',
+                        dataType: 'json',
+                        data: {'pair_id': pair_id},
+                        success: function (data) {
+                            $.each(data, function (i, items) {
+                                $('#id_truck').append($('<option>', {
+                                    value: items.transporter_truck_id,
+                                    text: items.transporter_truck__vehicle_license_number,
+                                    selected: true
+                                }));
+
+                                //$("#id_truck option:selected").text(data['transporter_truck__vehicle_license_number'])
+                                //$("#id_truck option:selected").val(data['transporter_truck_id'])
+
+                            })
+                            $.each(data, function (i, items) {
+                                $('#id_driver').append($('<option>', {
+                                    value: items.transporter_driver_id,
+                                    text: items.transporter_driver__driver_name,
+                                    selected: true
+                                }));
+
+                                //$("#id_driver option:selected").text(data['transporter_driver__driver_name'])
+                                //$("#id_driver option:selected").val(data['transporter_driver_id'])
+
+                            });
+
+
+                            //$(paird_truck_driver).parent().parent().find("#id_driver").val(data[0]['transporter_driver__driver_name']);
+                            $(paird_truck_driver).parent().parent().find("#id_driver").val(data[0]['transporter_driver_id']);
+                            //$(paird_truck_driver).parent().parent().find("#id_truck").val(data[0]['transporter_truck__vehicle_license_number']);
+                            $(paird_truck_driver).parent().parent().find("#id_truck").val(data[0]['transporter_truck_id']);
+
+
+                            $('#existing_vendor_truck_pair').modal('hide');
+
+                        }
+                    })
+
+                }
+
+            });
+        }
+
+
+    </script>
+    <script type="text/javascript">
+
+        function unique_truck_mobile_number() {
+
+            var mobile_number = $('#id_mobile_number').val();
+            $.ajax({
+                type: 'GET',
+                url: '/transporter/truck_mobile_unique/' + mobile_number,
+                dataType: 'json',
+                data: {paramVal: mobile_number},
+                success: function (data) {
+
+
+                    var data = $("#id_mobile_number").val(data);
+                    var data1 = document.getElementById("id_mobile_number").value;
+
+                    if (data1 === "Allready Registered") {
+
+                        swal({
+                            title: "Number Already Exists",
+                            text: mobile_number,
+                            icon: "error",
+                            closeOnClickOutside: false,
+                            closeOnEsc: false,
+                        });
+
+
+                        document.getElementById("id_mobile_number").value = "";
+                    }
+
+
+                }
+            });
+
+
+        }
+
+
+    </script>
+    <script>
+        function ExistingVendorTruckpair() {
+
+            $('#existing_vendor_truck_pair').modal('show');
+            $.ajax({
+                url: "/market_vehicle/vendor_truck_pair/",
+                type: "POST",
+                success: function (data) {
+                    var v_name = (data[0]['vender']);
+                    var t_number = (data[1]['truck']);
+
+                    $('#vendorname_2').empty();
+                    $('#vendorname_2').append($('<option>', {
+
+                        text: "Select Vendor"
+                    }));
+                    $.each(v_name, function (i, obj) {
+                        var v_value = "<option value=" + obj.id + ">" + obj.vender_name + "</option>";
+                        $(v_value).appendTo('#vendorname_2');
+                    });
+
+                    $('#markettruck_2').empty();
+                    $('#markettruck_2').append($('<option>', {
+
+                        text: "Select_number"
+                    }));
+                    $.each(t_number, function (i, obj) {
+
+                        var t_value = "<option value=" + obj.id + ">" + obj.transporter_truck_id__vehicle_license_number + "</option>";
+                        $(t_value).appendTo('#markettruck_2');
+
+                    });
+
+
+                }
+            })
+        }
+
+    </script>
+    <script>
+        $(function () {
+            $('#select_truck_type').on('change', function () {
+                $('#id_driver').val('');
+                if ($('#select_truck_type option:selected').val() == 'own') {
+
+
+                }
+                $('#inlineCheckbox2').prop("checked", false);
+                $('#inlineCheckbox1').prop("checked", false);
+                $('#final_total').val(0);
+                var inded_id = $('#indend').val();
+
+
+                $.ajax({
+                    type: 'GET',
+                    url: '/placement/indend_matched_trucks_driver_pair/',
+                    dataType: 'json',
+                    data: {indend_id: inded_id, pair_type: $('#select_truck_type').val()},
+                    success: function (data12) {
+
+                        $('#id_truck').empty();
+                        $('#id_truck').append($('<option>', {
+                            value: "",
+                            text: "Select Truck"
+                        }));
+                        $.each(data12, function (i, obj) {
+
+                            var div_data = "<option value=" + obj.transporter_truck + ">" + obj.transporter_truck__vehicle_license_number + "</option>";
+                            $(div_data).appendTo('#id_truck');
+
+                        });
+
+
+                    }
+                })
+
+
+            });
+        });
+
+
+    </script>
+    <script type="text/javascript">
+
+        function unique_vendor_mobile_number() {
+            console.log("in un")
+
+            var mobile_number = $('#mobile_number').val();
+            console.log(mobile_number)
+            $.ajax({
+                type: 'GET',
+                url: '/market_vehicle/vendor_mobile_unique/' + mobile_number,
+                dataType: 'json',
+                data: {paramVal: mobile_number},
+                success: function (data) {
+
+
+                    $("#mobile_number").val(data);
+                    var data = $("#mobile_number").val(data);
+                    var data1 = document.getElementById("mobile_number").value;
+                    console.log(data1, "")
+
+                    if (data1 === "Allready Registered") {
+                        console.log("success")
+                        swal({
+                            title: "Number Already Exists",
+                            text: mobile_number,
+                            icon: "error",
+                            closeOnClickOutside: false,
+                            closeOnEsc: false,
+                        });
+                        document.getElementById("mobile_number").value = "";
+                        console.log("all ready")
+                    }
+
+
+                }
+            });
+
+
+        }
+    </script>
+    <script type="text/javascript">
+        function unique_driver_mobile_number() {
+            var mobile_number = $('#driver_mobile_number').val();
+            $.ajax({
+                    type: 'GET',
+                    url: '/transporter/driver_mobile_unique/' + mobile_number,
+                    dataType: 'json',
+                    data: {paramVal: mobile_number},
+                    success: function (data) {
+
+
+
+
+
+                        if (data === "Allready Registered") {
+                            swal({
+                                title: "Number Already Exists",
+                                text: mobile_number,
+                                icon: "error",
+                                closeOnClickOutside: false,
+                                closeOnEsc: false,
+                            });
+
+                            document.getElementById("driver_mobile_number").value = "";
+                        }
+                        else if (data === mobile_number) {
+
+                            $('#driver_mobile_number').val(mobile_number);
+                        }
+                        else {
+                            swal({
+                                title: data,
+                                text: "",
+                                closeOnClickOutside: false,
+                                closeOnEsc: false,
+                            });
+                            document.getElementById("driver_mobile_number").value = "";
+                        }
+
+
+                    }
+                }
+            );
+
+
+        }
+
+        function upperCaseF(a) {
+            setTimeout(function () {
+                a.value = a.value.toUpperCase();
+            }, 1);
+        }
+    </script>
+    <script>
+        var truck = $("#id_truck option");                    // Collect options
+        truck.detach().sort(function (a, b) {               // Detach from select, then Sort
+            var at = $(a).text();
+            var bt = $(b).text();
+            return (at > bt) ? 1 : ((at < bt) ? -1 : 0);            // Tell the sort function how to order
+        });
+        truck.appendTo($("#id_truck"));
+
+        var driver = $("#id_driver option");                    // Collect options
+        driver.detach().sort(function (a, b) {               // Detach from select, then Sort
+            var at = $(a).text();
+            var bt = $(b).text();
+            return (at > bt) ? 1 : ((at < bt) ? -1 : 0);            // Tell the sort function how to order
+        });
+        driver.appendTo($("#id_driver"));
+
+        var vendor = $("#vendorname option");                    // Collect options
+        vendor.detach().sort(function (a, b) {               // Detach from select, then Sort
+            var at = $(a).text();
+            var bt = $(b).text();
+            return (at > bt) ? 1 : ((at < bt) ? -1 : 0);            // Tell the sort function how to order
+        });
+        vendor.appendTo($("#vendorname"));
+
+        var indend = $("#indend option");                    // Collect options
+        indend.detach().sort(function (a, b) {               // Detach from select, then Sort
+            var at = $(a).text();
+            var bt = $(b).text();
+            return (at > bt) ? 1 : ((at < bt) ? -1 : 0);            // Tell the sort function how to order
+        });
+        indend.appendTo($("#indend"));
+    </script>
+    <script>
+        function on_change_owner_type() {
+            var truck_type = $('#select_truck_type').val();
+
+            if (truck_type === "own") {
+                $('#market_table').hide();
+                $('#own_table').show();
+                //$('#market_table').prop('required', true);
+                //$('#id_insurance_copy').prop('required', true);
+            }
+            else if (truck_type === "market") {
+                $('#own_table').hide();
+                $('#market_table').show();
+                //$('#id_insurance_copy').prop('required', false);
+                //$('#id_rs_ammount').prop('required', false);
+
+
+            }
+
+
+        }
+
+        function swal_ok_click() {
+            var truck_type = $('#select_truck_type').val();
+
+            if (truck_type === "own") {
+                console.log("own")
+                $('#market_table').hide();
+                $('#own_table').show();
+                //$('#market_table').prop('required', true);
+                //$('#id_insurance_copy').prop('required', true);
+            }
+            else if (truck_type === "market") {
+                console.log("market")
+                $('#own_table').hide();
+                $('#market_table').show();
+                //$('#id_insurance_copy').prop('required', false);
+                //$('#id_rs_ammount').prop('required', false);
+
+
+            }
+        }
+
+    </script>
+    <script>
+        if ($("#driver_final_total").val === 0) {
+            swal("Trip Budget", "Should Not be 0", "warning")
+        }
+
+    </script>
+{% endblock %}

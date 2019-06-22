@@ -1,0 +1,177 @@
+{% extends 'base/layout.html' %}
+{% load staticfiles %}
+{% block contain %}
+    <div class="page-container">
+
+        <!-- Page content -->
+        <div class="page-content">
+
+            <!-- Main content -->
+            <div class="content-wrapper">
+
+                <!-- Content area -->
+                <div class="content">
+
+                    <!-- Registration form -->
+                    <form name="register" id="register" role="form" method="post"
+                          action="/base/register/">{% csrf_token %}
+                        <div class="row">
+                            <div class="col-lg-6 col-lg-offset-3">
+                                <div class="panel registration-form">
+                                    <div class="panel-body">
+                                        <div class="text-center">
+                                            <div class="icon-object border-success text-success"><i
+                                                    class="icon-plus3"></i></div>
+                                            <h5 class="content-group-lg">Create account
+                                                <small class="display-block">All fields are required</small>
+                                            </h5>
+                                        </div>
+
+                                        <div class="form-group has-feedback">
+                                            <input type="text" class="form-control" name="user_name" id="user_name" placeholder="Choose username">
+                                            <div class="form-control-feedback">
+                                                <i class="icon-user-plus text-muted"></i>
+                                            </div>
+                                        </div>
+
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="form-group has-feedback">
+                                                    <input type="text" class="form-control" name="first_name" id="first_name" placeholder="First name">
+                                                    <div class="form-control-feedback">
+                                                        <i class="icon-user-check text-muted"></i>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-md-6">
+                                                <div class="form-group has-feedback">
+                                                    <input type="text" class="form-control" name="last_name" id="last_name" placeholder="Last name">
+                                                    <div class="form-control-feedback">
+                                                        <i class="icon-user-check text-muted"></i>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="form-group has-feedback">
+                                                    <input type="password" class="form-control"
+                                                           name="password" id="password"
+                                                           placeholder="Create password">
+                                                    <div class="form-control-feedback">
+                                                        <i class="icon-user-lock text-muted"></i>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-md-6">
+                                                <div class="form-group has-feedback">
+                                                    <input type="password" class="form-control"
+                                                           name="re_password" id="re_password"
+                                                           placeholder="Repeat password">
+                                                    <div class="form-control-feedback">
+                                                        <i class="icon-user-lock text-muted"></i>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="form-group has-feedback">
+                                                    <input type="email" class="form-control" name="email" id="email" placeholder="Your email">
+                                                    <div class="form-control-feedback">
+                                                        <i class="icon-mention text-muted"></i>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="form-group has-feedback">
+                                                    <input type="text" class="form-control" name="mobile_no" id="mobile_no" placeholder="Your Contact">
+                                                    <div class="form-control-feedback">
+                                                        <i class="icon-mobile text-muted"></i>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                            <div class="col-md-12">
+                                                <div class="text-center">
+                                                    <a href="{% url 'login' %}">Back to login form
+                                                    </a>
+                                                    <button type="submit"
+                                                            class="btn bg-teal-400 btn-labeled btn-labeled-right ml-10">
+                                                        <b><i class="icon-plus3"></i></b> Create account
+                                                    </button>
+                                                </div>
+                                            </div>
+                                            </div>
+
+                                        </div>
+
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                    <!-- /registration form -->
+
+                </div>
+                <!-- /content area -->
+
+            </div>
+            <!-- /main content -->
+
+        </div>
+        <!-- /page content -->
+
+    </div>
+    <!-- /page container -->
+
+{% endblock %}
+{% block script %}
+    <script>
+        $(document).ready(function () {
+            $(document).on('change', '#user_name', function () {
+
+                var user_name = $('#user_name').val();
+
+                $.ajax({
+                    type: 'GET',
+                    url: '/base/unique_user/',
+                    dataType: 'json',
+                    data: {"user_name": user_name},
+                    success: function (data) {
+                        console.log(data);
+                        if (data !== '')
+                        {
+                            swal({
+                                title: user_name,
+                                text: "User Name Already Teken",
+                                icon: "error",
+                                closeOnClickOutside: false,
+                                closeOnEsc: false
+                            });
+                            $('#user_name').val('');
+                        }
+                        else
+                        {
+                             swal({
+                                title: "Successfully registered",
+                                text: " User name is "+user_name,
+                                icon: "success",
+                                closeOnClickOutside: false,
+                                closeOnEsc: false
+                            });
+                        }
+
+
+
+                    }
+                })
+            });
+        });
+    </script>>
+{% endblock %}

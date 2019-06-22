@@ -1,0 +1,316 @@
+{% extends 'base/layout.html' %}
+{% block contain %}
+    <style>
+        .todo_title {
+            background: #89dbf7;
+            border-radius: 2em;
+            border: none;
+            font-weight: bold;
+            padding: 0.8em;
+
+            color: #A2A2A2;
+            font-size: 1.1em;
+            padding-left: 1.5em;
+
+            outline: none;
+            box-shadow: 0 4px 6px -5px hsl(0, 0%, 40%), inset 0px 4px 6px -5px hsl(0, 0%, 2%)
+        }
+
+        .task_desc {
+            background: #13f7ab;
+            border-radius: 2em;
+            border: none;
+            font-weight: bold;
+            padding: 0.3em;
+
+            color: #A2A2A2;
+            font-size: 1.1em;
+            padding-left: 1.5em;
+
+            outline: none;
+            box-shadow: 0 4px 6px -5px hsl(0, 0%, 40%), inset 0px 4px 6px -5px hsl(0, 0%, 2%)
+        }
+
+    </style>
+    <div class="container">
+
+
+        <div class="panel-heading">
+            {% for i in all_project %}
+                <div class="add_div" id="add_div">
+                    <div class="panel panel-primary">
+                        <div class="panel-heading todo_box">
+                            <input type="text" class="todo_title" value="{{ i.project_name }}" name="todo_title"
+                                   style="width: 80%;color: black">
+
+                            <button style="border:none;background-color: transparent"
+                                    class="btn btn-success clone_trigger"
+                                    type="button"><i class="fas fa-plus-square"></i>
+                            </button>
+                            <button style="border:none;background-color: transparent" class="btn title_edit"><i
+                                    class="fas fa-pencil-alt"></i></button>
+                            <button style="border:none;background-color: transparent"
+                                    class="btn btn-danger title_remove"><i
+                                    class="fas fa-trash-alt"></i></button>
+                            <button style="border:none;background-color: transparent"
+                                    class="btn btn-success title_save"><i
+                                    class="fas fa-check"></i></button>
+
+                        </div>
+                        <div class="panel-body task_box" style="background-color: lightblue;">
+                            <div class="add_task" id="add_task">
+                                <input type="text" class="task_desc" value="{{ i.task_desc }}" name="task_desc"
+                                       style="width: 80%;color: black">
+
+                                <button style="border:none;background-color: transparent"
+                                        class="btn clone_task"><i class="fas fa-plus-square"></i>
+                                </button>
+                                <button style="border:none;background-color: transparent;"
+                                        class="btn task_edit"><i class="fas fa-pencil-alt"></i>
+                                </button>
+                                <button style="border:none;background-color: transparent"
+                                        class="btn task_remove"><i class="fas fa-trash-alt"></i>
+                                </button>
+                                <button style="border:none;background-color: transparent"
+                                        class="btn task_save"><i class="fas fa-check"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+            <div class=" add_div" id="add_div">
+                <div class="panel panel-primary">
+                    <div class="panel-heading todo_box">
+                        <input type="text" class="todo_title" name="todo_title" style="width: 80%;color: black">
+                        {#                    <span class="editable project_title">Project Name</span>#}
+                        <button style="border:none;background-color: transparent" class="btn btn-success clone_trigger"
+                                type="button"><i class="fas fa-plus-square"></i>
+                        </button>
+                        <button style="border:none;background-color: transparent" class="btn title_edit"><i
+                                class="fas fa-pencil-alt"></i></button>
+                        <button style="border:none;background-color: transparent" class="btn btn-danger title_remove"><i
+                                class="fas fa-trash-alt"></i></button>
+                        <button style="border:none;background-color: transparent" class="btn btn-success title_save"><i
+                                class="fas fa-check"></i></button>
+
+                    </div>
+                    <div class="panel-body">
+                        <!-- This is the main container and "shell" for the todo app. -->
+
+                    </div>
+
+
+                </div>
+
+
+            </div>
+        <div class="text-center">
+            <input type="button" class="btn-primary btn" value="ADD TODO" id="add_new_todo">
+        </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block script %}
+    <script type="application/javascript">
+
+        $(document).ready(function () {
+            //------------------ADD TODO---------------------------//
+
+            $(".clone_trigger").click(function () {
+                $("#add_div:last").clone(true).insertAfter("#add_div");
+
+            });
+            //------------------ADD TASK---------------------------//
+            $(".clone_task").click(function () {
+                $(this).closest("div.task_box").find(".add_task").clone(true).insertAfter("#add_task");
+
+            });
+
+        });
+    </script>
+    <script type="application/javascript">
+        $(document).ready(function () {
+            //-------------------ADD PROJECT IN DB---------------------------//
+
+            $('.title_save').click(function () {
+                var todo_title = $(this).closest("div.todo_box").find(".todo_title");
+                var project_name = $(this).closest("div.todo_box").find(".todo_title").val();
+
+                $.ajax({
+                    type: 'GET',
+                    url: '/app/add_project/',
+                    dataType: 'json',
+                    data: {"project_name": project_name},
+                    success: function (data) {
+                        console.log(data);
+                        if (data !== 'created') {
+                            swal({
+                                title: project_name,
+                                text: "Project Name Already Teken",
+                                icon: "error",
+                                closeOnClickOutside: false,
+                                closeOnEsc: false
+                            });
+                            todo_title.removeAttr('readonly')
+
+                        }
+                        else {
+                            swal({
+                                title: "Successfully registered",
+                                text: " Project Name is " + project_name,
+                                icon: "success",
+                                closeOnClickOutside: false,
+                                closeOnEsc: false
+                            });
+
+                            todo_title.attr("readonly", true);
+                        }
+
+
+                    }
+                })
+
+            });
+            //-------------------ED PROJECT IN DB---------------------------//
+            $('.title_edit').click(function () {
+                $(this).closest("div.todo_box").find(".todo_title").removeAttr('readonly');
+            });
+
+        })
+    </script>
+    <script type="application/javascript">
+        $(document).ready(function () {
+            $(".title_remove").click(function () {
+                $(this).closest(".add_div").remove();
+                var project_name = $(this).closest("div.todo_box").find(".todo_title").val();
+                $.ajax({
+                    type: 'GET',
+                    url: '/app/delete_project/',
+                    dataType: 'json',
+                    data: {"project_name": project_name},
+                    success: function (data) {
+                        console.log(data);
+                        if (data !== 'deleted') {
+                            swal({
+                                title: project_name,
+                                text: "Project Name Not Found",
+                                icon: "error",
+                                closeOnClickOutside: false,
+                                closeOnEsc: false
+                            });
+
+
+                        }
+                        else {
+                            swal({
+                                title: "Successfully Deleted",
+                                text: " Project Name is " + project_name,
+                                icon: "success",
+                                closeOnClickOutside: false,
+                                closeOnEsc: false
+                            });
+                            $(this).closest(".add_div").remove();
+                        }
+
+
+                    }
+                })
+
+
+            })
+        })
+
+    </script>
+    <script type="application/javascript">
+        $(document).ready(function () {
+            //-------------------ADD TASK IN DB---------------------------//
+
+            $('.task_save').click(function () {
+
+                var task = $(this).closest("div.task_box").find(".task_desc");
+                var task_desc = $(this).closest("div.task_box").find(".task_desc").val();
+                var project_name = $(this).parents().find(".todo_title").val();
+
+                $.ajax({
+                    type: 'GET',
+                    url: '/app/add_task/',
+                    dataType: 'json',
+                    data: {"project_name":project_name,"task_desc": task_desc},
+                    success: function (data) {
+                        console.log(data);
+                        if (data !== 'created') {
+                            swal({
+                                title: 'Error',
+                                text: "Task Desc Already Teken",
+                                icon: "error",
+                                closeOnClickOutside: false,
+                                closeOnEsc: false
+                            });
+                            task.removeAttr('readonly')
+
+                        }
+                        else {
+                            task.attr("readonly", true);
+                        }
+
+
+                    }
+                })
+
+            });
+            //-------------------EDIT PROJECT IN DB---------------------------//
+            $('.task_edit').click(function () {
+                task.removeAttr('readonly');
+            });
+
+        })
+    </script>
+    <script type="application/javascript">
+        $(document).ready(function () {
+            $(".task_remove").click(function () {
+
+                var task = $(this).closest("div.task_box").find(".add_task");
+                var task_desc = $(this).closest("div.task_box").find(".task_desc").val();
+                var project_name = $(this).parents().find(".todo_title").val();
+
+                $.ajax({
+                    type: 'GET',
+                    url: '/app/delete_task/',
+                    dataType: 'json',
+                    data: {"project_name":project_name,"task_desc": task_desc},
+                    success: function (data) {
+                        console.log(data);
+                        if (data !== 'deleted') {
+                            swal({
+                                title: "",
+                                text: "Task Desc Name Not Found",
+                                icon: "error",
+                                closeOnClickOutside: false,
+                                closeOnEsc: false
+                            });
+
+
+                        }
+                        else {
+                            swal({
+                                title: "Successfully Deleted",
+                                text: " Task Name is " + task_desc,
+                                icon: "success",
+                                closeOnClickOutside: false,
+                                closeOnEsc: false
+                            });
+                            task.remove();
+                        }
+
+
+                    }
+                })
+
+
+            })
+        })
+
+    </script>
+{% endblock %}

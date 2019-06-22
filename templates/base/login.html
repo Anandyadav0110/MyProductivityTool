@@ -1,0 +1,92 @@
+{% extends 'base/layout.html' %}
+{% block contain %}
+    <div class="login-container">
+        <div class="page-container">
+
+            <!-- Page content -->
+            <div class="page-content">
+
+                <!-- Main content -->
+                <div class="content-wrapper">
+
+                    <!-- Content area -->
+                    <div class="content">
+
+                        <!-- Advanced login -->
+                        <form name="login" id="login" role="form" method="post"
+                              action="/base/login/">{% csrf_token %}
+                            <div class="panel panel-body login-form">
+                                <div class="text-center">
+                                    <div class="icon-object border-slate-300 text-slate-300"><i
+                                            class="icon-reading"></i></div>
+                                    <h5 class="content-group">Login to your account
+                                        <small class="display-block">Your credentials</small>
+                                    </h5>
+                                </div>
+
+                                <div class="form-group has-feedback has-feedback-left">
+                                    <input type="text" class="form-control" name="user_name" id="user_name"
+                                           placeholder="Username">
+                                    <div class="form-control-feedback">
+                                        <i class="icon-user text-muted"></i>
+                                    </div>
+                                </div>
+
+                                <div class="form-group has-feedback has-feedback-left">
+                                    <input type="password" class="form-control" name="password" id="password"
+                                           placeholder="Password">
+                                    <div class="form-control-feedback">
+                                        <i class="icon-lock2 text-muted"></i>
+                                    </div>
+                                </div>
+                                <div class="form-group has-feedback has-feedback-left">
+                                    <label style="color: red">{{ message }}</label>
+
+                                </div>
+                                <div class="form-group login-options">
+                                    <div class="row">
+                                        <div class="col-sm-6">
+                                            <div class="form-group">
+                                                <button type="submit" class="btn bg-blue btn-block">Login <i
+                                                        class="icon-arrow-right14 position-right"></i></button>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-sm-6 text-right">
+                                            <a href="{% url 'forgot_password' %}">Forgot password?</a>
+                                        </div>
+                                    </div>
+                                </div>
+
+
+                                <div class="content-divider text-muted form-group"><span>or sign in with</span></div>
+                                <ul class="list-inline form-group list-inline-condensed text-center">
+                                    <li><a href="{% url 'social:begin' 'facebook' %}" class="btn border-indigo text-indigo btn-flat btn-icon btn-rounded"><i
+                                            class="icon-facebook"></i></a></li>
+                                </ul>
+
+                                <div class="content-divider text-muted form-group"><span>Don't have an account?</span>
+                                </div>
+                                <a href="{% url 'register' %}" class="btn btn-default btn-block content-group">Sign
+                                    up</a>
+
+
+                            </div>
+                        </form>
+                        <!-- /advanced login -->
+
+                    </div>
+                    <!-- /content area -->
+
+                </div>
+                <!-- /main content -->
+
+            </div>
+            <!-- /page content -->
+
+        </div>
+    </div>
+{% endblock %}
+{% block script %}
+
+{% endblock %}
