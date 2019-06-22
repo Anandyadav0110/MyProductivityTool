@@ -1,0 +1,161 @@
+{% extends 'base/layout.html' %}
+{% block contain %}
+
+    <div class="container">
+
+        <div class="panel-heading">
+<span class="editable">Project Name</span>
+            <div id="id_parent" class="tile">
+
+            </div>
+
+            <input type="text" name="total_row_count" id="insert" hidden>
+
+        </div>
+    </div>
+
+    <div id="id_parent" class="tile"></div>
+
+    <input type="text" name="total_row_count" id="insert" hidden>
+
+    <div class="text-center">
+        <button class="btn btn-primary" type="button" name="ok" id="add_new_div" onclick="add_new_entry()">
+            Add TODO List
+        </button>
+    </div>
+    <h2></h2>
+<button>generate new element</button>
+    </div>
+
+{% endblock %}
+
+{% block script %}
+
+    <script type="application/javascript">
+        $(document).ready(function () {
+
+            $(".clone_trigger").click(function () {
+                console.log("add");
+
+                $("#add_div:last").clone(true).insertAfter("#add_div");
+
+            });
+            $(".title_remove").click(function () {
+                console.log("remove");
+                $(this).closest(".add_div").remove();
+
+            })
+        })
+
+    </script>
+    <script type="text/javascript">
+        $(function () {
+            //Loop through all Labels with class 'editable'.
+            $(".editable").each(function () {
+                //Reference the Label.
+                var label = $(this);
+
+                //Add a TextBox next to the Label.
+                label.after("<input type = 'text' style='display:none;width: 80%;color: black' />");
+
+                //Reference the TextBox.
+                var textbox = $(this).next();
+
+                //Set the name attribute of the TextBox.
+                textbox[0].name = this.id.replace("lbl", "txt");
+
+                //Assign the value of Label to TextBox.
+                textbox.val(label.html());
+
+                //When Label is clicked, hide Label and show TextBox.
+                label.click(function () {
+                    $(this).hide();
+                    $(this).next().show();
+                });
+
+                //When focus is lost from TextBox, hide TextBox and show Label.
+                textbox.focusout(function () {
+                    $(this).hide();
+                    $(this).prev().html($(this).val());
+                    $(this).prev().show();
+                });
+            });
+        });
+    </script>
+    <script type="application/javascript">
+
+        window.count = 0;
+
+        function add_new_entry() {
+            row_data =
+
+                '<div class="panel panel-primary">' +
+                '<div class="panel-heading todo_box">' +
+                '<input type="text" style="width: 90%;color: black" class="todo_title" placeholder="Project Name" name="projet_name" id="project_name">'+
+                '<span class="editable">Project Name</span>'+
+                '<button style="border:none;background-color: transparent" class="btn title_edit">'+
+                '<i class="fas fa-pencil-alt"></i></button>'+
+                //'<button style="border:none;background-color: transparent" class="btn btn-danger title_remove">' +
+                //'<i class="fas fa-trash-alt"></i></button>' +
+                '<button style="border:none;background-color: transparent" class="btn removebtn" id="removebtn_' + window.count + '" >' +
+                '<i class="fas fa-trash-alt"></i></button>' +
+                '<button style="border:none;background-color: transparent" class="btn btn-success title_save">' +
+                '<i class="fas fa-check"></i></button>' +
+                '</div>' +
+                '<div class="panel-body">' +
+                '</div>' +
+                '</div>' +
+
+                '</div>';
+
+            $('#id_parent').append(row_data);
+            document.getElementById("insert").value = window.count;
+            $('.removebtn').on('click', function () {
+
+                $('#activity_count').val(parseFloat($('#activity_count').val()) - 1);
+                window.count = window.count - 1;
+                $(this).parent().parent().remove();
+            });
+            window.count = window.count + 1;
+        }
+
+    </script>
+    <script type="text/javascript">
+        function add_new_div() {
+            $('#add_new_div').on('click', function () {
+                {
+                    $('#id_parent').show();
+                }
+            });
+        }
+    </script>
+    <script type="application/javascript">
+$(document).ready(function () {
+    $('.title_save').click(function () {
+console.log("1");
+        $(".todo_title").attr("readonly", true);
+
+
+    });
+    $('.title_edit').click(function () {
+        console.log("0");
+        $(".todo_title").removeAttr('readonly');
+        //$(this).closest(".todo_title").removeAttr("readonly");
+
+    });
+})
+    </script>
+    <script>
+    var counter = 0;
+
+$("button").click(function() {
+    $("h2").append("<span class='editable'>Project Name</span>")
+});
+
+// With on():
+
+$("h2").on("click", "p.test", function(){
+    alert($(this).text());
+});
+    </script>
+{% endblock %}
