@@ -33,9 +33,10 @@
 
     </style>
     <div class="container">
-
+<a href="{% url 'logout' %}"><input type="button" class="btn-danger form-control " style="width: 100px" value="Logout" ></a>
 
         <div class="panel-heading">
+
             {% for i in all_project %}
                 <div class="add_div" id="add_div">
                     <div class="panel panel-primary">
@@ -43,10 +44,10 @@
                             <input type="text" class="todo_title" value="{{ i.project_name }}" name="todo_title"
                                    style="width: 80%;color: black">
 
-                            <button style="border:none;background-color: transparent"
-                                    class="btn btn-success clone_trigger"
-                                    type="button"><i class="fas fa-plus-square"></i>
-                            </button>
+{#                            <button style="border:none;background-color: transparent"#}
+{#                                    class="btn btn-success clone_trigger"#}
+{#                                    type="button"><i class="fas fa-plus-square"></i>#}
+{#                            </button>#}
                             <button style="border:none;background-color: transparent" class="btn title_edit"><i
                                     class="fas fa-pencil-alt"></i></button>
                             <button style="border:none;background-color: transparent"
@@ -62,9 +63,9 @@
                                 <input type="text" class="task_desc" value="{{ i.task_desc }}" name="task_desc"
                                        style="width: 80%;color: black">
 
-                                <button style="border:none;background-color: transparent"
-                                        class="btn clone_task"><i class="fas fa-plus-square"></i>
-                                </button>
+{#                                <button style="border:none;background-color: transparent"#}
+{#                                        class="btn clone_task"><i class="fas fa-plus-square"></i>#}
+{#                                </button>#}
                                 <button style="border:none;background-color: transparent;"
                                         class="btn task_edit"><i class="fas fa-pencil-alt"></i>
                                 </button>
@@ -106,7 +107,7 @@
 
             </div>
         <div class="text-center">
-            <input type="button" class="btn-primary btn" value="ADD TODO" id="add_new_todo">
+            <input type="button" class="btn-primary btn clone_trigger" value="ADD TODO" id="add_new_todo">
         </div>
         </div>
     </div>

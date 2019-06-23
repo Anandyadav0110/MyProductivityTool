@@ -9,18 +9,22 @@ import json
 from .models import Project,Task
 # Create your views here.
 def add_project(request):
+    user_name = request.session.get('user_name')
+    print(user_name)
+    user_obj=User.objects.get(username=user_name)
     project_name = request.GET.get('project_name')
-    print(project_name)
+
     try:
         project_obj = Project.objects.get(project_name = project_name)
     except:
         project_obj = None
+
     if project_obj is  None:
-        Project.objects.create(project_name = project_name)
+        Project.objects.create(project_name = project_name,user_name=user_obj)
         message = 'created'
     else:
         message = project_name + ' is already in TODO'
-    print(message)
+
     data = json.dumps(message, indent=4, sort_keys=True, default=str)
     return HttpResponse(data, content_type='application/json')
 
