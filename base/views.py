@@ -1,22 +1,9 @@
 from django.shortcuts import render
-from django.contrib.auth import user_logged_out
 from django.http import HttpResponse
 from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
-from .models import UserProfile
 import random
 import json
-
-
-import csv
-from django.core.mail import EmailMessage
-from django.db.models import Sum
-import datetime
-import locale
-from django.contrib.auth import update_session_auth_hash
-from django.contrib.auth.forms import PasswordChangeForm
-from django.contrib import messages
-from django.contrib.auth.decorators import user_passes_test
 from .models import UserProfile
 from app.models import Project,Task
 
@@ -56,7 +43,7 @@ def register(request):
         user_name = request.POST['user_name']
         first_name = request.POST['first_name']
         last_name = request.POST['last_name']
-        password = request.POST['re_password']
+        password = request.POST['password']
         email = request.POST['email']
         mobile_no = request.POST['mobile_no']
         user = User.objects.create_user(username=user_name, password=password,email=email)
@@ -92,6 +79,7 @@ def forgot_password(request):
         if User.objects.filter(username=user_name).exists():
             user_obj = User.objects.get(username=user_name)
             password = random.randint(1000, 9999)
+            print("==============New Password==================")
             print(password)
             user_obj.set_password(password)
             user_obj.save()

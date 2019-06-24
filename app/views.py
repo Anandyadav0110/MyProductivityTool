@@ -1,16 +1,12 @@
-from django.shortcuts import render
-from django.contrib.auth import user_logged_out
 from django.http import HttpResponse
-from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
-import random
 import json
-
 from .models import Project,Task
+
 # Create your views here.
+
 def add_project(request):
     user_name = request.session.get('user_name')
-    print(user_name)
     user_obj=User.objects.get(username=user_name)
     project_name = request.GET.get('project_name')
 
@@ -30,7 +26,7 @@ def add_project(request):
 
 def delete_project(request):
     project_name = request.GET.get('project_name')
-    print(project_name)
+
     try:
         project_obj = Project.objects.get(project_name = project_name)
     except:
@@ -40,38 +36,37 @@ def delete_project(request):
         message = 'deleted'
     else:
         message = project_name + ' is not found'
-    print(message)
+
     data = json.dumps(message, indent=4, sort_keys=True, default=str)
     return HttpResponse(data, content_type='application/json')
 
 def add_task(request):
     project_name = request.GET.get('project_name')
     task_desc = request.GET.get('task_desc')
-    print(project_name,task_desc)
+
     try:
         project_obj = Project.objects.get(project_name = project_name)
     except:
         project_obj = None
-    print(project_obj,'=================')
+
     try:
         task_obj = Task.objects.get(project_name=project_obj,task_desc = task_desc)
     except:
         task_obj = None
-    print(task_desc, '=================')
 
     if task_obj is  None:
         Task.objects.create(project_name = project_obj,task_desc = task_desc)
         message = 'created'
     else:
         message = task_desc + ' is already in '+ project_name
-    print(message)
+
     data = json.dumps(message, indent=4, sort_keys=True, default=str)
     return HttpResponse(data, content_type='application/json')
 
 def delete_task(request):
     project_name = request.GET.get('project_name')
     task_desc = request.GET.get('task_desc')
-    print(project_name, task_desc)
+
     try:
         project_obj = Project.objects.get(project_name=project_name)
     except:
@@ -87,6 +82,6 @@ def delete_task(request):
         message = 'deleted'
     else:
         message = task_desc + ' is not found'
-    print(message)
+
     data = json.dumps(message, indent=4, sort_keys=True, default=str)
     return HttpResponse(data, content_type='application/json')
