@@ -42,7 +42,7 @@
                     <div class="panel panel-primary">
                         <div class="panel-heading todo_box">
                             <input type="text" class="todo_title" value="{{ i.project_name }}" name="todo_title"
-                                   style="width: 80%;color: black">
+                                   style="width: 80%;color: black" placeholder="Enter Project Name">
                             <button style="border:none;background-color: transparent" class="btn title_edit"><i
                                     class="fas fa-pencil-alt"></i></button>
                             <button style="border:none;background-color: transparent"
@@ -56,7 +56,7 @@
                         <div class="panel-body task_box" style="background-color: lightblue;">
                             <div class="add_task" id="add_task">
                                 <input type="text" class="task_desc" value="{{ i.task_desc }}" name="task_desc"
-                                       style="width: 80%;color: black">
+                                       style="width: 80%;color: black" placeholder="Enter Task Description">
                                 <button style="border:none;background-color: transparent;"
                                         class="btn task_edit"><i class="fas fa-pencil-alt"></i>
                                 </button>
@@ -74,7 +74,7 @@
             <div class=" add_div" id="add_div">
                 <div class="panel panel-primary">
                     <div class="panel-heading todo_box">
-                        <input type="text" class="todo_title" name="todo_title" style="width: 80%;color: black">
+                        <input type="text" class="todo_title" name="todo_title" style="width: 80%;color: black" placeholder="Enter Project Name">
                         <button style="border:none;background-color: transparent" class="btn btn-success clone_trigger"
                                 type="button"><i class="fas fa-plus-square"></i>
                         </button>
@@ -243,6 +243,13 @@
 
                         }
                         else {
+                            swal({
+                                title: 'Success',
+                                text: "Task Desc Added",
+                                icon: "success",
+                                closeOnClickOutside: false,
+                                closeOnEsc: false
+                            });
                             task.attr("readonly", true);
                         }
 
