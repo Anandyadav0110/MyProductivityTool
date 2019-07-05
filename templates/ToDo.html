@@ -43,6 +43,7 @@
                         <div class="panel-heading todo_box">
                             <input type="text" class="todo_title" value="{{ i.project_name }}" name="todo_title"
                                    style="width: 80%;color: black" placeholder="Enter Project Name">
+                            <input type="text" class="todo_id" value="{{ i.id }}" name="todo_id" style="color: black" hidden>
                             <button style="border:none;background-color: transparent" class="btn title_edit"><i
                                     class="fas fa-pencil-alt"></i></button>
                             <button style="border:none;background-color: transparent"
@@ -57,6 +58,7 @@
                             <div class="add_task" id="add_task">
                                 <input type="text" class="task_desc" value="{{ i.task_desc }}" name="task_desc"
                                        style="width: 80%;color: black" placeholder="Enter Task Description">
+                                <input type="text" class="task_desc" value="{{ i.id }}" name="task_id" hidden>
                                 <button style="border:none;background-color: transparent;"
                                         class="btn task_edit"><i class="fas fa-pencil-alt"></i>
                                 </button>
@@ -75,6 +77,7 @@
                 <div class="panel panel-primary">
                     <div class="panel-heading todo_box">
                         <input type="text" class="todo_title" name="todo_title" style="width: 80%;color: black" placeholder="Enter Project Name">
+                        <input type="text" class="todo_id" value="{{ i.id }}" name="todo_id" style="color: black" hidden>
                         <button style="border:none;background-color: transparent" class="btn btn-success clone_trigger"
                                 type="button"><i class="fas fa-plus-square"></i>
                         </button>
@@ -86,10 +89,22 @@
                                 class="fas fa-check"></i></button>
 
                     </div>
-                    <div class="panel-body">
-                        <!-- This is the main container and "shell" for the todo app. -->
-
-                    </div>
+                    <div class="panel-body task_box" style="background-color: lightblue;">
+                            <div class="add_task" id="add_task">
+                                <input type="text" class="task_desc" value="{{ i.task_desc }}" name="task_desc"
+                                       style="width: 80%;color: black" placeholder="Enter Task Description">
+                                <input type="text" class="task_desc" value="{{ i.id }}" name="task_id" hidden>
+                                <button style="border:none;background-color: transparent;"
+                                        class="btn task_edit"><i class="fas fa-pencil-alt"></i>
+                                </button>
+                                <button style="border:none;background-color: transparent"
+                                        class="btn task_remove"><i class="fas fa-trash-alt"></i>
+                                </button>
+                                <button style="border:none;background-color: transparent"
+                                        class="btn task_save"><i class="fas fa-check"></i>
+                                </button>
+                            </div>
+                        </div>
 
 
                 </div>
@@ -111,6 +126,8 @@
 
             $(".clone_trigger").click(function () {
                 $("#add_div:last").clone(true).insertAfter("#add_div");
+                $(this).closest("div.todo_box").find(".todo_id").val('')
+                $(this).closest("div.todo_box").find(".todo_title").val('')
 
             });
             //------------------ADD TASK---------------------------//
@@ -128,37 +145,41 @@
             $('.title_save').click(function () {
                 var todo_title = $(this).closest("div.todo_box").find(".todo_title");
                 var project_name = $(this).closest("div.todo_box").find(".todo_title").val();
+                var project_id = $(this).closest("div.todo_box").find(".todo_id");
 
                 $.ajax({
                     type: 'GET',
                     url: '/app/add_project/',
                     dataType: 'json',
-                    data: {"project_name": project_name},
+                    data: {"project_name": project_name,"project_id":project_id.val()},
                     success: function (data) {
-                        console.log(data);
-                        if (data !== 'created') {
+                        console.log(data)
+                        if(data[0] === 'created') {
                             swal({
-                                title: project_name,
-                                text: "Project Name Already Teken",
-                                icon: "error",
-                                closeOnClickOutside: false,
-                                closeOnEsc: false
-                            });
-                            todo_title.removeAttr('readonly')
+                                     title: "Successfully Created",
+                                     text: project_name,
+                                     icon: "success",
+                                     closeOnClickOutside: false,
+                                     closeOnEsc: false
+                                 });
 
+                        todo_title.attr("readonly", true);
+                        project_id.val(data[1])
+
+                    }
+                    else
+                        {
+                         swal({
+                                     title: "Successfully Updated",
+                                     text: project_name,
+                                     icon: "success",
+                                     closeOnClickOutside: false,
+                                     closeOnEsc: false
+                                 });
+
+                        todo_title.attr("readonly", true);
+                        project_id.val(data[1])
                         }
-                        else {
-                            swal({
-                                title: "Successfully registered",
-                                text: " Project Name is " + project_name,
-                                icon: "success",
-                                closeOnClickOutside: false,
-                                closeOnEsc: false
-                            });
-
-                            todo_title.attr("readonly", true);
-                        }
-
 
                     }
                 })
@@ -176,25 +197,14 @@
             $(".title_remove").click(function () {
                 $(this).closest(".add_div").remove();
                 var project_name = $(this).closest("div.todo_box").find(".todo_title").val();
+                var project_id = $(this).closest("div.todo_box").find(".todo_id").val();
                 $.ajax({
                     type: 'GET',
                     url: '/app/delete_project/',
                     dataType: 'json',
-                    data: {"project_name": project_name},
+                    data: {"project_id": project_id},
                     success: function (data) {
-                        console.log(data);
-                        if (data !== 'deleted') {
-                            swal({
-                                title: project_name,
-                                text: "Project Name Not Found",
-                                icon: "error",
-                                closeOnClickOutside: false,
-                                closeOnEsc: false
-                            });
 
-
-                        }
-                        else {
                             swal({
                                 title: "Successfully Deleted",
                                 text: " Project Name is " + project_name,
@@ -203,7 +213,6 @@
                                 closeOnEsc: false
                             });
                             $(this).closest(".add_div").remove();
-                        }
 
 
                     }

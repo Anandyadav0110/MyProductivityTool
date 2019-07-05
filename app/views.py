@@ -9,33 +9,36 @@ def add_project(request):
     user_name = request.session.get('user_name')
     user_obj=User.objects.get(username=user_name)
     project_name = request.GET.get('project_name')
-
+    project_id = request.GET.get('project_id')
     try:
-        project_obj = Project.objects.get(project_name = project_name)
+        project_obj = Project.objects.get(id=project_id)
     except:
         project_obj = None
 
-    if project_obj is  None:
-        Project.objects.create(project_name = project_name,user_name=user_obj)
-        message = 'created'
+    if project_obj == None:
+        project_obj = Project.objects.create(project_name = project_name,user_name=user_obj)
+        data=['created',project_obj.id]
     else:
-        message = project_name + ' is already in TODO'
+        project_obj.project_name = project_name
+        project_obj.save()
+        data = ['updated', project_obj.id]
 
-    data = json.dumps(message, indent=4, sort_keys=True, default=str)
+
+    data = json.dumps(data, indent=4, sort_keys=True, default=str)
     return HttpResponse(data, content_type='application/json')
 
 def delete_project(request):
-    project_name = request.GET.get('project_name')
+    project_id = request.GET.get('project_id')
 
     try:
-        project_obj = Project.objects.get(project_name = project_name)
+        project_obj = Project.objects.get(id = project_id)
     except:
         project_obj = None
     if project_obj is not None:
         project_obj.delete()
         message = 'deleted'
     else:
-        message = project_name + ' is not found'
+        message = project_id.project_name + ' is not found'
 
     data = json.dumps(message, indent=4, sort_keys=True, default=str)
     return HttpResponse(data, content_type='application/json')

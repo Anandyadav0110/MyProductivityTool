@@ -13,8 +13,8 @@ from app.models import Project,Task
 def login(request):
     user = request.session.get('user_name')
     if user is not None:
-        all_project = Project.objects.filter().values('project_name')
-        all_task = Task.objects.filter().values('task_desc')
+        all_project = Project.objects.filter().values('project_name','id')
+        all_task = Task.objects.filter().values('task_desc','id')
         return render(request, 'todo.html', {'all_project': all_project, 'all_task': all_task})
     if request.method == 'POST':
         username = request.POST['user_name']
