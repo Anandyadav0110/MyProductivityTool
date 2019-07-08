@@ -280,6 +280,7 @@
                 var task_desc = $(this).parent().find('.task_desc').val();
                 var project_name = $(this).parents().find(".todo_title").val();
                 var project_id = $(this).parent().parent().parent().find(".todo_id").val();
+                $(this).closest(".task_div").remove();
                 $.ajax({
                     type: 'GET',
                     url: '/app/delete_task/',

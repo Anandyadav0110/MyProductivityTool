@@ -26,7 +26,7 @@ _________________________Add Task_________________________
 
 1)Enter task description and click on right check for save task
 
-2)click on pen icon for edit task and click on right check for save task 
+2)click on pen icon for edit task and click on right check for save task
 
 3)click on delete box to delete task
 
