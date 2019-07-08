@@ -5,7 +5,7 @@ from django.contrib.auth.models import User
 import random
 import json
 from .models import UserProfile
-from app.models import Project,Task
+from app.models import Project, Task
 
 
 # Create your views here.
@@ -13,14 +13,24 @@ from app.models import Project,Task
 def login(request):
     user = request.session.get('user_name')
     if user is not None:
-        all_project = Project.objects.filter().values('project_name','id')
-        all_task = Task.objects.filter().values('task_desc','id')
-        return render(request, 'todo.html', {'all_project': all_project, 'all_task': all_task})
+        all_project = Project.objects.filter().values('project_name', 'id')
+
+        data = []
+        for i in all_project:
+            all_task = Task.objects.filter(project_name=i['id']).values('task_desc', 'id')
+            all_task_list = []
+            for j in all_task:
+                all_task_list.append(j)
+            i.update({'task':all_task_list})
+
+            data.append(i)
+        print(data)
+        return render(request, 'todo.html', {'data': data})
     if request.method == 'POST':
         username = request.POST['user_name']
         password = request.POST['password']
 
-        print(username,password)
+        print(username, password)
 
         user = authenticate(username=username, password=password)
 
@@ -31,10 +41,9 @@ def login(request):
             all_task = Task.objects.filter().values('task_desc')
             request.session['user_name'] = username
 
-
-            return render(request, 'todo.html', {'all_project':all_project,'all_task':all_task})
+            return render(request, 'ToDo.html', {'all_project': all_project, 'all_task': all_task})
         else:
-                return render(request, 'base/login.html', {"message": "Invalid Credentials"})
+            return render(request, 'base/login.html', {"message": "Invalid Credentials"})
 
     else:
         return render(request, 'base/login.html')
@@ -48,25 +57,27 @@ def register(request):
         password = request.POST['password']
         email = request.POST['email']
         mobile_no = request.POST['mobile_no']
-        user = User.objects.create_user(username=user_name, password=password,email=email)
+        user = User.objects.create_user(username=user_name, password=password, email=email)
         user.save()
-        UserProfile.objects.create(username=user, first_name=first_name,last_name=last_name, email=email,
+        UserProfile.objects.create(username=user, first_name=first_name, last_name=last_name, email=email,
                                    mobile_no=mobile_no)
 
         return render(request, 'base/login.html')
 
     return render(request, 'base/register.html')
 
+
 def unique_user(request):
     user_name = request.GET.get('user_name')
 
     user_obj = User.objects.get(username=user_name)
     if user_obj is not None:
-        message='User name already teken'
+        message = 'User name already teken'
     else:
-        message=''
+        message = ''
     data = json.dumps(message, indent=4, sort_keys=True, default=str)
     return HttpResponse(data, content_type='application/json')
+
 
 def logout(request):
     request.session.flush()
@@ -74,7 +85,6 @@ def logout(request):
 
 
 def forgot_password(request):
-
     if request.method == 'POST':
         user_name = request.POST['user_name']
 
@@ -96,4 +106,3 @@ def forgot_password(request):
             return render(request, 'base/login.html')
         return render(request, 'base/forgot_password.html')
     return render(request, 'base/forgot_password.html')
-

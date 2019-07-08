@@ -34,6 +34,9 @@ def delete_project(request):
         project_obj = Project.objects.get(id = project_id)
     except:
         project_obj = None
+
+    Task.objects.filter(project_name=project_obj).delete()
+
     if project_obj is not None:
         project_obj.delete()
         message = 'deleted'
@@ -44,11 +47,11 @@ def delete_project(request):
     return HttpResponse(data, content_type='application/json')
 
 def add_task(request):
-    project_name = request.GET.get('project_name')
+    project_id = request.GET.get('project_id')
     task_desc = request.GET.get('task_desc')
 
     try:
-        project_obj = Project.objects.get(project_name = project_name)
+        project_obj = Project.objects.get(id = project_id)
     except:
         project_obj = None
 
@@ -61,17 +64,17 @@ def add_task(request):
         Task.objects.create(project_name = project_obj,task_desc = task_desc)
         message = 'created'
     else:
-        message = task_desc + ' is already in '+ project_name
+        message = task_desc + ' is already in project'
 
     data = json.dumps(message, indent=4, sort_keys=True, default=str)
     return HttpResponse(data, content_type='application/json')
 
 def delete_task(request):
-    project_name = request.GET.get('project_name')
+    project_id = request.GET.get('project_id')
     task_desc = request.GET.get('task_desc')
 
     try:
-        project_obj = Project.objects.get(project_name=project_name)
+        project_obj = Project.objects.get(id=project_id)
     except:
         project_obj = None
 
